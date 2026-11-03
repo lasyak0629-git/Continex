@@ -1,0 +1,13 @@
+{
+  "project": "Nova Events App",
+  "leaver": "Priya",
+  "leave_date": "2026-11-12",
+  "files": [
+    {"name": "meeting_notes.md", "access_level": "EVERYONE"},
+    {"name": "task_list.csv", "access_level": "EVERYONE"},
+    {"name": "decision_log.md", "access_level": "EVERYONE"},
+    {"name": "handover_draft.md", "access_level": "EVERYONE"},
+    {"name": "ops_guide.md", "access_level": "LEADS_ONLY"},
+    {"name": "secrets_and_restricted.md", "access_level": "RESTRICTED"}
+  ]
+}

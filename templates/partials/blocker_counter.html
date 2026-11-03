@@ -1,1 +1,17 @@
 <!-- OWNER: Dev B -->
+<div class="readiness card p-3 mb-3 verdict-{{ verdict_class }}">
+  <div class="d-flex align-items-center gap-4">
+    <div>
+      <div class="text-muted small">Blockers</div>
+      <div class="counter display-4" data-value="{{ blocker_count }}">{{ blocker_count }}</div>
+    </div>
+    <div>
+      <div class="text-muted small">Warnings</div>
+      <div class="display-6">{{ warning_count }}</div>
+    </div>
+    <div class="ms-auto text-end">
+      <div class="fs-4 fw-bold">{{ verdict }}</div>
+      <div class="small text-muted">CONTINEX never declares a project "safe".</div>
+    </div>
+  </div>
+</div>

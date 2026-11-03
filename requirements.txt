@@ -1,3 +1,9 @@
 # OWNER: Dev A
 Django>=5.0,<6.0
 python-dotenv>=1.0
+anthropic
+python-docx
+pypdf
+pytest
+pytest-django
+google-genai
