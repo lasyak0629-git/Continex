@@ -1,1 +1,49 @@
-[]
+[
+  {"item_type": "deadline", "text": "Venue contract must be signed", "source_name": "meeting_notes.md",
+   "quote": "Priya will sign the venue contract before the 15th", "people": ["Priya"], "owner": "Priya",
+   "date_text": "before the 15th", "reason": null, "confidence": 0.9},
+
+  {"item_type": "deadline", "text": "Sponsor deck due", "source_name": "meeting_notes.md",
+   "quote": "Ravi sends the sponsor deck by 20 Nov", "people": ["Ravi"], "owner": "Ravi",
+   "date_text": "20 Nov", "reason": null, "confidence": 0.9},
+
+  {"item_type": "deadline", "text": "Budget sheet update", "source_name": "task_list.csv",
+   "quote": "Priya updates the budget sheet in 2 days", "people": ["Priya"], "owner": "Priya",
+   "date_text": "in 2 days", "reason": null, "confidence": 0.9},
+
+  {"item_type": "task", "text": "Confirm catering headcount", "source_name": "task_list.csv",
+   "quote": "Priya and Meera confirm catering headcount", "people": ["Priya", "Meera"], "owner": "Meera",
+   "date_text": null, "reason": null, "confidence": 0.85},
+
+  {"item_type": "task", "text": "Chase the AV vendor", "source_name": "task_list.csv",
+   "quote": "Priya to chase the AV vendor sometime soon", "people": ["Priya"], "owner": "Priya",
+   "date_text": "sometime soon", "reason": null, "confidence": 0.7},
+
+  {"item_type": "access_pointer", "text": "Vendor portal login is held by one person", "source_name": "secrets_and_restricted.md",
+   "quote": "Only Priya holds the vendor portal login", "people": ["Priya"], "owner": "Priya",
+   "date_text": null, "reason": null, "confidence": 0.95},
+
+  {"item_type": "responsibility", "text": "Sponsor relationships", "source_name": "ops_guide.md",
+   "quote": "Priya manages all sponsor relationships", "people": ["Priya"], "owner": "Priya",
+   "date_text": null, "reason": null, "confidence": 0.9},
+
+  {"item_type": "decision", "text": "Switched ticketing vendor", "source_name": "decision_log.md",
+   "quote": "We moved to the new ticketing vendor", "people": ["Ravi"], "owner": null,
+   "date_text": null, "reason": null, "confidence": 0.8},
+
+  {"item_type": "decision", "text": "Chose cloud hosting for the app", "source_name": "decision_log.md",
+   "quote": "We chose cloud hosting because it is cheaper for our traffic", "people": ["Ravi", "Meera"], "owner": null,
+   "date_text": null, "reason": "cheaper for our traffic", "confidence": 0.9},
+
+  {"item_type": "claim", "text": "Ticket sales are up 40 percent", "source_name": "handover_draft.md",
+   "quote": "Ticket sales are up 40 percent since launch", "people": [], "owner": null,
+   "date_text": null, "reason": null, "confidence": 0.9, "quote_verified": false},
+
+  {"item_type": "claim", "text": "Venue allows outside caterers", "source_name": "handover_draft.md",
+   "quote": "I think the venue allows outside caterers", "people": [], "owner": null,
+   "date_text": null, "reason": null, "confidence": 0.3},
+
+  {"item_type": "task", "text": "Book the photographer", "source_name": "task_list.csv",
+   "quote": "Ravi and Meera book the photographer", "people": ["Ravi", "Meera"], "owner": "Ravi",
+   "date_text": null, "reason": null, "confidence": 0.85}
+]
