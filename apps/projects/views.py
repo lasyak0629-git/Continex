@@ -6,6 +6,12 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
+from django.contrib import messages
+from django.views.decorators.http import require_POST
+
+from apps.accounts.decorators import project_role_required
+from .services import extract_project
+
 from .forms import UploadForm
 from .models import Project, Source
 
@@ -43,3 +49,17 @@ def eval_results(request):
     path = Path(settings.BASE_DIR) / "demo_data" / "eval_report.json"
     report = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
     return render(request, "eval_results.html", {"r": report})
+
+@require_POST
+@project_role_required("manager")
+def run_extract(request, project_id):
+    try:
+        s = extract_project(request.project, request.user)
+    except Exception as e:  # API down, bad key, unreadable file
+        messages.error(request, f"Extraction failed: {e}")
+    else:
+        messages.success(
+            request,
+            f"{s['created']} items extracted. {s['dropped']} dropped (quote not found), "
+            f"{s['rejected']} rejected, {len(s['never_sent'])} restricted file(s) never sent.")
+    return redirect("review:home", project_id=project_id)

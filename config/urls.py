@@ -10,6 +10,7 @@ from apps.projects import views as project_views
 project_patterns = [
     path("<int:project_id>/upload/", project_views.upload, name="upload"),
     path("eval/", project_views.eval_results, name="eval"),
+    path("<int:project_id>/extract/", project_views.run_extract, name="extract"),
 ]
 
 urlpatterns = [
