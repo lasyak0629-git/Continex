@@ -1,1 +1,15 @@
 <!-- OWNER: Dev B -->
+{# CONTEXT: f{message, support}, evidence[{source_name, quote, kind, person}] #}
+<div>
+  <p class="mb-2"><strong>{{ f.message }}</strong></p>
+  <span class="badge bg-secondary mb-3">{{ f.support }}</span>
+  {% for e in evidence %}
+    <blockquote class="source-quote">
+      &ldquo;{{ e.quote }}&rdquo;
+      <footer class="small">{{ e.source_name }}{% if e.person %} &middot; {{ e.person }}{% endif %}</footer>
+    </blockquote>
+  {% empty %}
+    <p class="text-muted">No supporting evidence found in the records.</p>
+  {% endfor %}
+  <div class="small text-muted">Quotes are checked by code against the source file.</div>
+</div>
