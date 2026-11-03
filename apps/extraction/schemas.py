@@ -1,21 +1,48 @@
 # OWNER: Dev SHARED CONTRACT - agree before editing
-from typing import Literal, Optional
-from pydantic import BaseModel, ConfigDict, Field
+
+"""
+SHARED CONTRACT between Developer A (rehearsal/review) and Developer B (extraction).
+B's extractor must output a list of ExtractedItemSchema.
+Do not change a field name without telling the other developer.
+"""
+from dataclasses import dataclass, field, asdict
+from typing import List, Optional
+
+ITEM_TYPES = (
+    "task",             # something someone must do
+    "deadline",         # a dated commitment
+    "decision",         # a choice that was made (needs a reason)
+    "responsibility",   # who owns an area, system or duty
+    "access_pointer",   # WHERE something lives or WHO holds it (never the secret itself)
+    "claim",            # a statement of fact the handover relies on
+)
 
 
-class ExtractedItemSchema(BaseModel):
-    model_config = ConfigDict(extra="forbid")  # unknown fields = rejected
+@dataclass
+class ExtractedItemSchema:
+    item_type: str                      # one of ITEM_TYPES
+    text: str                           # one-sentence normalised statement
+    source_name: str                    # file name the item came from
+    quote: str                          # verbatim text from the source (must exist in it)
+    people: List[str] = field(default_factory=list)   # all people involved
+    owner: Optional[str] = None         # the single accountable person, if stated
+    date_text: Optional[str] = None     # raw date wording, e.g. "next Friday", "15 Nov"
+    reason: Optional[str] = None        # why, for decisions; None if not stated
+    confidence: float = 0.0             # 0.0 to 1.0, from the extractor
 
-    kind: Literal["date", "owner", "pointer", "task", "decision", "claim"]
-    subject: str
-    person: Optional[str] = None
-    raw_date_text: Optional[str] = None   # NOT parsed by the AI
-    status: Optional[str] = None          # tasks: open / done
-    reason_stated: Optional[bool] = None  # decisions: is a reason recorded?
-    source_file: str
-    source_quote: str = Field(min_length=3)
+    def validate(self):
+        if self.item_type not in ITEM_TYPES:
+            raise ValueError(f"bad item_type: {self.item_type}")
+        if not self.text.strip() or not self.quote.strip():
+            raise ValueError("text and quote are required")
+        if not 0.0 <= self.confidence <= 1.0:
+            raise ValueError("confidence must be between 0 and 1")
 
+    def to_dict(self):
+        return asdict(self)
 
-class ExtractionResult(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    items: list[ExtractedItemSchema]
+    @classmethod
+    def from_dict(cls, d):
+        item = cls(**d)
+        item.validate()
+        return item
