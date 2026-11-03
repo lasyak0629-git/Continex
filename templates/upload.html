@@ -18,6 +18,11 @@
   <button class="btn btn-primary">Upload</button>
 </form>
 
+<form method="post" action="{% url 'projects:extract' project.id %}">
+    {% csrf_token %}
+    <button>Extract items</button>
+</form>
+
 <h5>Uploaded files</h5>
 <table class="table table-sm">
   <thead><tr><th>File</th><th>Access</th></tr></thead>

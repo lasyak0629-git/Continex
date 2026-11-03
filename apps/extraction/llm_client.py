@@ -67,7 +67,10 @@ class FakeClient(LLMClient):
 
 
 def get_client() -> LLMClient:
+<<<<<<< HEAD
     _load_env()
+=======
+>>>>>>> origin/main
     provider = os.getenv("LLM_PROVIDER", "anthropic")
     if provider == "fake":
         return FakeClient()

@@ -19,7 +19,11 @@ class MultipleFileField(forms.FileField):
         return [single(data, initial)]
 
 
-ACCESS_CHOICES = [("EVERYONE", "Everyone"), ("LEADS_ONLY", "Leads only"), ("RESTRICTED", "Restricted")]
+ACCESS_CHOICES = [
+    ("public", "Everyone on the project"),
+    ("internal", "Team members and above"),
+    ("restricted", "Leads only (never sent to the AI)"),
+]
 
 
 class UploadForm(forms.Form):
