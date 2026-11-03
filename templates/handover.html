@@ -1,8 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Handover - CONTINEX{% endblock %}
 {% block content %}
-{# CONTEXT: incoming, version{number, approved_by, approved_at}, timeline[{date, label}],
-   cards[...], received (bool), receipt_url, versions[{number, approved_at}], viewer_role #}
+
+{% comment %}CONTEXT: incoming, version, timeline, cards, received, receipt_url, versions, viewer_role{% endcomment %}
+
+{% if not handover %}
+  <div class="alert alert-secondary">No handover has been built yet. It is created once every item is reviewed and no blockers remain.</div>
+  <form method="post" action="{% url 'projects:handover_build' project.id %}">
+    {% csrf_token %}
+    <button class="btn btn-primary">Build handover</button>
+  </form>
+{% else %}
+
 <h2>Handover for {{ incoming }}</h2>
 <p class="text-muted">
   <span class="badge bg-primary">Version {{ version.number }}</span>
@@ -43,4 +52,5 @@
 <ul class="small">
   {% for v in versions %}<li>Version {{ v.number }}, {{ v.approved_at|date:"j M Y H:i" }}</li>{% endfor %}
 </ul>
+{% endif %}
 {% endblock %}

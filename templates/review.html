@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Review - CONTINEX{% endblock %}
 {% block content %}
-{# CONTEXT: questions[{id, text, finding_message, answered_by, answer_text, answer_url}],
-   blocker_count, warning_count, verdict, verdict_class, approve_url, rerun_url #}
+
 <h2>Review: answer, correct, approve</h2>
 <p class="text-muted">Answers are saved as "stated by [person]". They are not evidence.</p>
 
@@ -23,6 +22,7 @@
       <form method="post" action="{{ q.answer_url }}" class="row g-2">
         {% csrf_token %}
         <div class="col-md-8">
+          <input class="form-control mb-1" name="owner" placeholder="New owner's name, e.g. Karthik" required>
           <input class="form-control" name="answer" placeholder="Your answer, for example: Karthik will take over the domain">
         </div>
         <div class="col-md-4 d-flex gap-2">
@@ -38,14 +38,18 @@
 {% endfor %}
 
 <div class="d-flex gap-2 mt-4">
-  <button class="btn btn-success"
-          hx-post="{{ rerun_url }}" hx-target="#readiness" hx-swap="innerHTML">
-    Re-run rehearsal
-  </button>
+
+  <form method="post" action="{{ rerun_url }}">
+    {% csrf_token %}
+    <button class="btn btn-success">Re-run rehearsal</button>
+  </form>
+
   <form method="post" action="{{ approve_url }}">
     {% csrf_token %}
     <button class="btn btn-dark">Approve handover</button>
   </form>
+
 </div>
+
 <p class="small text-muted mt-2">Nothing is shared with the incoming person until a responsible person approves.</p>
 {% endblock %}

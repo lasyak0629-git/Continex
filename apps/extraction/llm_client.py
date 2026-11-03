@@ -3,14 +3,6 @@ import os
 from pathlib import Path
 
 
-def _load_env():
-    try:
-        from dotenv import load_dotenv, find_dotenv
-        load_dotenv(find_dotenv(usecwd=True))
-    except ImportError:
-        pass
-
-
 class LLMClient:
     def complete(self, system: str, user: str) -> str:
         raise NotImplementedError
@@ -18,14 +10,13 @@ class LLMClient:
 
 class AnthropicClient(LLMClient):
     def __init__(self):
-        _load_env()
         import anthropic
         self.client = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY from env
         self.model = os.getenv("LLM_MODEL", "claude-sonnet-5-5")
 
     def complete(self, system, user):
         r = self.client.messages.create(
-            model=self.model, max_tokens=6000, system=system,
+            model=self.model, max_tokens=4000, system=system,
             messages=[{"role": "user", "content": user}],
         )
         return "".join(b.text for b in r.content if b.type == "text")
@@ -33,15 +24,9 @@ class AnthropicClient(LLMClient):
 
 class GeminiClient(LLMClient):
     def __init__(self):
-        _load_env()
         from google import genai
-        key = (os.getenv("GEMINI_API_KEY") or "").strip()
-        # Normal Gemini API mode by default. Vertex mode only if GEMINI_VERTEX=true in .env.
-        if os.getenv("GEMINI_VERTEX", "").strip().lower() == "true":
-            self.client = genai.Client(vertexai=True, api_key=key)
-        else:
-            self.client = genai.Client(api_key=key)
-        self.model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+        self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+        self.model = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 
     def complete(self, system, user):
         from google.genai import types
@@ -67,10 +52,6 @@ class FakeClient(LLMClient):
 
 
 def get_client() -> LLMClient:
-<<<<<<< HEAD
-    _load_env()
-=======
->>>>>>> origin/main
     provider = os.getenv("LLM_PROVIDER", "anthropic")
     if provider == "fake":
         return FakeClient()
