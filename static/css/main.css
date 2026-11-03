@@ -1,1 +1,11 @@
 /* OWNER: Dev B */
+/* OWNER: Dev B */
+.counter { font-weight: 700; transition: color .3s; }
+.verdict-not-ready { border-left: 6px solid #dc3545; }
+.verdict-conditions { border-left: 6px solid #ffc107; }
+.finding-blocker { border-left: 4px solid #dc3545; }
+.finding-warning { border-left: 4px solid #ffc107; }
+.source-quote { background: #f8f9fa; border-left: 3px solid #6c757d; padding: .5rem .75rem; margin: .5rem 0; }
+.access-everyone { background: #198754; }
+.access-leads_only { background: #fd7e14; }
+.access-restricted { background: #dc3545; }

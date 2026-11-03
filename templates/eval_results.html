@@ -1,1 +1,22 @@
 <!-- OWNER: Dev B -->
+{% extends "base.html" %}
+{% block title %}Evaluation - CONTINEX{% endblock %}
+{% block content %}
+<h2>Measured results <small class="text-muted fs-6">({{ r.mode }} run)</small></h2>
+<div class="row g-3 my-3">
+  <div class="col-md-3"><div class="card p-3 text-center"><div class="display-6">{{ r.planted_found }}/{{ r.planted_total }}</div>planted issues found</div></div>
+  <div class="col-md-3"><div class="card p-3 text-center"><div class="display-6">{{ r.quotes_verified_pct }}%</div>quotes verified</div></div>
+  <div class="col-md-3"><div class="card p-3 text-center"><div class="display-6">{{ r.secrets_leaked|length }}</div>secrets leaked to AI</div></div>
+  <div class="col-md-3"><div class="card p-3 text-center"><div class="display-6">{{ r.injection_flagged }}</div>injection flagged, 0 obeyed</div></div>
+</div>
+<table class="table">
+  <thead><tr><th>ID</th><th>Rule</th><th>Result</th></tr></thead>
+  <tbody>
+  {% for p in r.planted_detail %}
+    <tr><td>{{ p.id }}</td><td>{{ p.rule }}</td>
+        <td>{% if p.found %}<span class="badge bg-success">found</span>{% else %}<span class="badge bg-danger">missed</span>{% endif %}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<p class="text-muted">Restricted files never sent to the AI: {{ r.restricted_never_sent|join:", " }}. {{ r.redactions }} secrets hidden before analysis. We report real results, even where they fall short.</p>
+{% endblock %}

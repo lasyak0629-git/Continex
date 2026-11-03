@@ -1,1 +1,24 @@
 <!-- OWNER: Dev B -->
+{% extends "base.html" %}
+{% block title %}Readiness report - CONTINEX{% endblock %}
+{% block content %}
+<h2>Verify: departure rehearsal</h2>
+<p class="text-muted">{{ leaver }} leaves on {{ leave_date }}. Every finding links to its source line.</p>
+
+<div id="readiness">{% include "partials/blocker_counter.html" %}</div>
+
+<button class="btn btn-success mb-3"
+        hx-post="{{ rerun_url }}" hx-target="#readiness" hx-swap="innerHTML">
+  Re-run rehearsal
+</button>
+
+{% for f in findings %}
+  {% include "partials/finding_row.html" %}
+{% empty %}
+  <div class="alert alert-secondary">No findings yet.</div>
+{% endfor %}
+
+<div class="small text-muted mt-4">
+  {{ dropped_count }} AI items were dropped because their quote was not found in the source.
+</div>
+{% endblock %}
