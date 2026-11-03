@@ -4,7 +4,7 @@ Rule-level scoring (findings, blockers) belongs to Dev A's tests.
 
 Run from the repo root:
     python -m tests.eval_vs_answer_key           # saved known-good run
-    python -m tests.eval_vs_answer_key --live    # real API (needs ANTHROPIC_API_KEY)
+    python -m tests.eval_vs_answer_key --live    # real AI (provider from .env)
 """
 import json
 import re
@@ -14,7 +14,7 @@ from types import SimpleNamespace
 
 from apps.ingestion.pipeline import prepare_sources
 from apps.extraction.extractor import run_extraction
-from apps.extraction.llm_client import FakeClient, AnthropicClient
+from apps.extraction.llm_client import FakeClient, get_client
 from apps.extraction.quote_verifier import _norm
 
 # The eval runs without a database, so it uses a plain role check.
@@ -51,7 +51,7 @@ def run_eval(live=False, role="LEAD"):
     texts, stats = prepare_sources(sources, allowed)
 
     if live:
-        client = AnthropicClient()
+        client = get_client()
     else:
         client = FakeClient(str(ROOT / "demo_data" / "known_good_run.json"))
     out = run_extraction(texts, client)
