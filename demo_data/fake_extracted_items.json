@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "item_type": "deadline",
+    "text": "Venue contract must be signed by the event date",
+    "source_name": "meeting_notes.md",
+    "quote": "Priya will sign the venue contract before the 15th",
+    "people": ["Priya"],
+    "owner": "Priya",
+    "date_text": "before the 15th",
+    "reason": null,
+    "confidence": 0.9
+  },
+  {
+    "item_type": "decision",
+    "text": "Switched ticketing vendor",
+    "source_name": "decision_log.md",
+    "quote": "We moved to the new ticketing vendor",
+    "people": ["Ravi"],
+    "owner": null,
+    "date_text": null,
+    "reason": null,
+    "confidence": 0.8
+  }
+]
