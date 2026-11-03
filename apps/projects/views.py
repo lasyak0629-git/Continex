@@ -9,10 +9,24 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import UploadForm
 from .models import Project, Source
 
+from apps.accounts.decorators import project_role_required
 
 @login_required
 def upload(request, project_id):
-    # Brunda: wrap with the role check from accounts.decorators (LEAD only)
+
+    @project_role_required("manager")
+    def upload(request, project_id):
+        project = request.project
+        form = UploadForm(request.POST or None, request.FILES or None)
+        if request.method == "POST" and form.is_valid():
+            level = form.cleaned_data["access_level"]  # must be public / internal / restricted
+            for f in form.cleaned_data["files"]:
+                Source.objects.create(project=project, name=f.name, file=f,
+                                  sensitivity=level, uploaded_by=request.user)
+            return redirect("projects:upload", project_id=project.id)
+        sources = Source.objects.filter(project=project)
+        return render(request, "upload.html", {"project": project, "form": form, "sources": sources})
+    
     project = get_object_or_404(Project, pk=project_id)
     form = UploadForm(request.POST or None, request.FILES or None)
     if request.method == "POST" and form.is_valid():

@@ -13,6 +13,8 @@ from apps.rehearsal.engine import run_rehearsal
 from apps.review import services
 from apps.round3.drift_watch import drift_for_user
 
+from apps.handover.models import Handover
+
 DEMO_NAME = "Demo: Nova Events App"
 TODAY = date(2026, 11, 3)
 LEAVE = date(2026, 11, 10)
@@ -33,6 +35,7 @@ class Command(BaseCommand):
             self.say(f"  {f.severity.upper():8} {f.rule:18} {f.message}")
 
     def handle(self, *args, **opts):
+        Handover.objects.filter(project__name=DEMO_NAME).delete()
         Project.objects.filter(name=DEMO_NAME).delete()  # only the demo project
         users = {}
         for name, role in DEMO_USERS:
