@@ -1,9 +1,15 @@
 # OWNER: Dev B
+# OWNER: Dev B
 from apps.extraction.schemas import ExtractedItemSchema
 from apps.extraction.quote_verifier import verify_items
 
+
 def item(q):
-    return ExtractedItemSchema(kind="pointer", subject="SMS", source_file="a.md", source_quote=q)
+    return ExtractedItemSchema(
+        item_type="access_pointer", text="SMS gateway held by Priya",
+        source_name="a.md", quote=q,
+    )
+
 
 def test_real_quote_kept_fake_dropped():
     src = {"a.md": "SMS gateway: ask Priya."}

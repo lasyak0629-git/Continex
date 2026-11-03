@@ -1,4 +1,5 @@
 # OWNER: Dev B
+# OWNER: Dev B
 import re
 
 
@@ -9,10 +10,11 @@ def _norm(s: str) -> str:
 
 
 def verify_items(items, source_texts: dict[str, str]):
-    """Keep only items whose quote really exists in the source they cite."""
+    """Keep only items whose quote really exists in the source they cite.
+    Dev A sets ExtractedItem.quote_verified = True for everything in `kept`."""
     kept, dropped = [], []
     for it in items:
-        src = source_texts.get(it.source_file, "")
-        ok = bool(it.source_quote) and _norm(it.source_quote) in _norm(src)
+        src = source_texts.get(it.source_name, "")
+        ok = bool(it.quote) and _norm(it.quote) in _norm(src)
         (kept if ok else dropped).append(it)
     return kept, dropped

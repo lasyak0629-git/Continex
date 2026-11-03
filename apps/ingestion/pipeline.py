@@ -4,7 +4,8 @@ from .redactor import redact
 from .readers import text, csv_reader, docx_reader, pdf_reader
 
 READERS = {
-    ".txt": text.read, ".md": text.read,
+    ".txt": text.read,
+    ".md": text.read,
     ".csv": csv_reader.read,
     ".docx": docx_reader.read,
     ".pdf": pdf_reader.read,
@@ -18,17 +19,23 @@ def read_file(path) -> str:
     return reader(path)
 
 
-def prepare_sources(sources, viewer_role, can_view):
+def prepare_sources(sources, allowed, never_send=("RESTRICTED",)):
     """
     sources: objects with .name, .path, .access_level
-    can_view: Dev A's accounts.permissions.can_view(role, access_level)
-    Returns (texts, stats). Restricted files never reach the AI.
+    allowed: a function allowed(source) -> bool, supplied by the caller.
+             In Django:  lambda s: can_view(request.user, s)
+             In the eval: a plain role check
+    Restricted files are never sent to the AI. Redaction runs before anything leaves.
+    Returns (texts, stats).
     """
     texts = {}
-    stats = {"redactions": 0, "skipped_restricted": []}
+    stats = {"redactions": 0, "skipped_no_access": [], "never_sent": []}
     for s in sources:
-        if not can_view(viewer_role, s.access_level):
-            stats["skipped_restricted"].append(s.name)
+        if s.access_level in never_send:
+            stats["never_sent"].append(s.name)
+            continue
+        if not allowed(s):
+            stats["skipped_no_access"].append(s.name)
             continue
         clean, n = redact(read_file(s.path))
         stats["redactions"] += n

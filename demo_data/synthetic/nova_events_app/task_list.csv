@@ -1,0 +1,5 @@
+id,task,owner,status,due
+T-03,Fix the QR check-in bug,Arjun,done,25 October 2026
+T-07,Migrate ticket emails to the new provider,Priya,open,20 November 2026
+T-09,Update the sponsor page,Meera,done,30 October 2026
+T-11,Renew the hosting plan,Karthik,open,15 December 2026

@@ -1,1 +1,31 @@
 # OWNER: Dev B
+# OWNER: Dev B
+import json
+from pathlib import Path
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect, render
+
+from .forms import UploadForm
+from .models import Project, Source
+
+
+@login_required
+def upload(request, project_id):
+    # Brunda: wrap with the role check from accounts.decorators (LEAD only)
+    project = get_object_or_404(Project, pk=project_id)
+    form = UploadForm(request.POST or None, request.FILES or None)
+    if request.method == "POST" and form.is_valid():
+        level = form.cleaned_data["access_level"]
+        for f in form.cleaned_data["files"]:
+            Source.objects.create(project=project, name=f.name, file=f, access_level=level)
+        return redirect("projects:upload", project_id=project.id)
+    sources = Source.objects.filter(project=project)
+    return render(request, "upload.html", {"project": project, "form": form, "sources": sources})
+
+
+@login_required
+def eval_results(request):
+    path = Path(settings.BASE_DIR) / "demo_data" / "eval_report.json"
+    report = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+    return render(request, "eval_results.html", {"r": report})
