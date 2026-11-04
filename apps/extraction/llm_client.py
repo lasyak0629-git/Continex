@@ -26,20 +26,32 @@ class GeminiClient(LLMClient):
     def __init__(self):
         from google import genai
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-        self.model = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+        self.models = [os.getenv("GEMINI_MODEL", "gemini-3.8-flash")]
+        fallback = os.getenv("GEMINI_FALLBACK_MODEL")
+        if fallback:
+            self.models.append(fallback)
 
     def complete(self, system, user):
+        import time
         from google.genai import types
-        r = self.client.models.generate_content(
-            model=self.model,
-            contents=user,
-            config=types.GenerateContentConfig(
-                system_instruction=system,
-                max_output_tokens=8000,
-                response_mime_type="application/json",
-            ),
-        )
-        return r.text
+        last = None
+        for model in self.models:
+            for attempt in range(3):
+                try:
+                    r = self.client.models.generate_content(
+                        model=model,
+                        contents=user,
+                        config=types.GenerateContentConfig(
+                            system_instruction=system,
+                            max_output_tokens=8000,
+                            response_mime_type="application/json",
+                        ),
+                    )
+                    return r.text
+                except Exception as e:  # 503 / 429 / timeouts: wait, then retry
+                    last = e
+                    time.sleep(3 * (attempt + 1))
+        raise last
 
 
 class FakeClient(LLMClient):
