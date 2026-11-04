@@ -8,8 +8,12 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
+from datetime import date
+from apps.rehearsal.engine import run_rehearsal
 from apps.accounts.decorators import project_role_required
 from apps.audit.logger import log
+
+from .models import Project
 
 from .forms import UploadForm
 from .models import Source
@@ -35,27 +39,34 @@ def upload(request, project_id):
 @require_POST
 @project_role_required("manager")
 def run_extract(request, project_id):
+    leaver = request.POST.get("leaver", "").strip()
+    try:
+        leave_date = date.fromisoformat(request.POST.get("leave_date", ""))
+    except ValueError:
+        leave_date = None
+    if not leaver or not leave_date:
+        messages.error(request, "Enter who is leaving and their last working day.")
+        return redirect("projects:upload", project_id=project_id)
     try:
         s = extract_project(request.project, request.user)
+        run_rehearsal(request.project, leaver, leave_date, user=request.user)
     except Exception as e:  # API down, bad key, unreadable file
-        messages.error(request, f"Extraction failed ({type(e).__name__}): {e}")
-    else:
-        skipped = s["never_sent"] + s["skipped"]
-        if not (s["created"] or s["dropped"] or s["rejected"]):
-            messages.warning(request, "No files you are allowed to analyse. "
-                                      "Nothing was sent to the AI.")
-        else:
-            messages.success(
-                request,
-                f"{s['created']} items saved with verified quotes. {s['dropped']} dropped "
-                f"(quote not found in source), {s['rejected']} rejected, "
-                f"{s['redactions']} secrets hidden, {s['injection']} hidden instruction(s) "
-                f"ignored. Skipped (never sent or no access): {skipped}.")
-    return redirect("projects:upload", project_id=project_id)
-
+        messages.error(request, f"Analysis failed ({type(e).__name__}): {e}")
+        return redirect("projects:upload", project_id=project_id)
+    messages.success(
+        request,
+        f"{s['created']} items saved with verified quotes. {s['dropped']} dropped "
+        f"(quote not found in source), {s['rejected']} rejected, "
+        f"{s['redactions']} secrets hidden, {s['injection']} hidden instruction(s) ignored.")
+    return redirect("review:home", project_id=project_id)
 
 @login_required
 def eval_results(request):
     path = Path(settings.BASE_DIR) / "demo_data" / "eval_report.json"
     report = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
     return render(request, "eval_results.html", {"r": report})
+
+@login_required
+def home(request):
+    projects = Project.objects.filter(memberships__user=request.user).distinct()
+    return render(request, "home.html", {"projects": projects})

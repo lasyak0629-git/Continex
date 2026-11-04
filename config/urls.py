@@ -3,10 +3,10 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
 from apps.handover import views as handover_views
-
 from apps.projects import views as project_views
 
 project_patterns = [
@@ -18,6 +18,9 @@ project_patterns = [
 ]
 
 urlpatterns = [
+    path("", project_views.home, name="home"),
+    path("login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"),
+    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("admin/", admin.site.urls),
     path("projects/<int:project_id>/review/", include("apps.review.urls")),
     path("projects/", include((project_patterns, "projects"))),

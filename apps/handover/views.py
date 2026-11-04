@@ -1,4 +1,4 @@
-# OWNER: Dev B writeen by Dev A 
+# OWNER: Dev B writen by Dev A 
 
 from django.contrib import messages
 from django.shortcuts import redirect, render
@@ -35,6 +35,7 @@ def handover_page(request, project_id):
                     "source_quote": t["quote"], "source_name": t["source"]}
                     for t in tasks],
             "data": data,
+            "leaver": data["leaver"],
         })
     return render(request, "handover.html", ctx)
 

@@ -22,7 +22,7 @@
       <form method="post" action="{{ q.answer_url }}" class="row g-2">
         {% csrf_token %}
         <div class="col-md-8">
-          <input class="form-control mb-1" name="owner" placeholder="New owner's name, e.g. Karthik" required>
+          <input class="form-control mb-1" name="owner" placeholder="New owner's name, e.g. Karthik">
           <input class="form-control" name="answer" placeholder="Your answer, for example: Karthik will take over the domain">
         </div>
         <div class="col-md-4 d-flex gap-2">

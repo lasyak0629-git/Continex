@@ -18,18 +18,13 @@
   <button class="btn btn-primary">Upload</button>
 </form>
 
-<form method="post" action="{% url 'projects:extract' project.id %}">
-    {% csrf_token %}
-    <button>Extract items</button>
-</form>
-
 <h5>Uploaded files</h5>
 <table class="table table-sm">
   <thead><tr><th>File</th><th>Access</th></tr></thead>
   <tbody>
   {% for s in sources %}
     <tr><td>{{ s.name }}</td>
-        <td><span class="badge access-{{ s.access_level|lower }}">{{ s.access_level }}</span></td></tr>
+        <td><span class="badge bg-secondary">{{ s.sensitivity }}</span></td></tr>
   {% empty %}
     <tr><td colspan="2" class="text-muted">No files yet.</td></tr>
   {% endfor %}
@@ -37,9 +32,15 @@
 </table>
 
 {% if sources %}
-<form method="post" action="{% url 'projects:extract' project.id %}">
+<form method="post" action="{% url 'projects:extract' project.id %}" class="card card-body mt-4">
   {% csrf_token %}
-  <button class="btn btn-success">Reconstruct: read the records and extract facts</button>
+  <h5>Analyse with AI</h5>
+  <div class="row g-2">
+    <div class="col-md-5"><input class="form-control" name="leaver" placeholder="Who is leaving? e.g. Priya" required></div>
+    <div class="col-md-4"><input class="form-control" type="date" name="leave_date" required></div>
+    <div class="col-md-3"><button class="btn btn-success w-100">Extract and run rehearsal</button></div>
+  </div>
+  <div class="small text-muted mt-2">Restricted files are never sent to the AI. Secrets are hidden first.</div>
 </form>
 {% endif %}
 {% endblock %}

@@ -10,12 +10,24 @@
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
 </head>
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
 <nav class="navbar navbar-dark bg-dark mb-4">
   <div class="container">
-    <span class="navbar-brand fw-bold">CONTINEX</span>
+    <a class="navbar-brand fw-bold" href="/">CONTINEX</a>
+    {% if user.is_authenticated %}
+    <div class="d-flex align-items-center gap-3">
+      <a class="text-light small text-decoration-none" href="/">Projects</a>
+      <span class="navbar-text small">{{ user.username }}</span>
+      <form method="post" action="{% url 'logout' %}" class="m-0">{% csrf_token %}
+        <button class="btn btn-sm btn-outline-light">Log out</button>
+      </form>
+    </div>
+    {% else %}
     <span class="navbar-text small">Intelligence that keeps work moving</span>
+    {% endif %}
   </div>
 </nav>
+
 <main class="container pb-5">
   {% if messages %}
     {% for m in messages %}
