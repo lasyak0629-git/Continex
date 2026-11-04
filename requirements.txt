@@ -7,3 +7,7 @@ pypdf
 pytest
 pytest-django
 google-genai
+gunicorn
+whitenoise
+google-genai
+python-dotenv

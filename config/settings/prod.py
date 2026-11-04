@@ -1,4 +1,3 @@
-# OWNER: Dev A
 import os
 
 from .base import *  # noqa
