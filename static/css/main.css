@@ -1,11 +1,11 @@
-/* OWNER: Dev B */
-/* OWNER: Dev B */
-.counter { font-weight: 700; transition: color .3s; }
-.verdict-not-ready { border-left: 6px solid #dc3545; }
-.verdict-conditions { border-left: 6px solid #ffc107; }
+.source-quote { border-left: 4px solid #0d6efd; background: #f4f8ff; padding: .6rem .9rem; margin: .5rem 0; font-style: italic; }
+.continuation-card { border-left: 4px solid #198754; }
+.finding { cursor: pointer; }
+.finding:hover { background: #f8f9fa; }
 .finding-blocker { border-left: 4px solid #dc3545; }
 .finding-warning { border-left: 4px solid #ffc107; }
-.source-quote { background: #f8f9fa; border-left: 3px solid #6c757d; padding: .5rem .75rem; margin: .5rem 0; }
-.access-everyone { background: #198754; }
-.access-leads_only { background: #fd7e14; }
-.access-restricted { background: #dc3545; }
+.badge.access-everyone { background: #198754; }
+.badge.access-leads_only { background: #fd7e14; }
+.badge.access-restricted { background: #dc3545; }
+#blocker-number { transition: transform .3s; }
+.pulse { transform: scale(1.3); }

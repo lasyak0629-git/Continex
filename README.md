@@ -16,3 +16,11 @@ Every file's first line shows its owner.
 
 ## Status
 Round 1: planning only. Build starts when the official window opens.
+## AI tools, libraries and services used
+- Claude and ChatGPT: research, drafting and help with code. The team reviewed everything.
+- Anthropic API (Claude): reads messy project text and returns structured JSON. It never acts and holds no accounts.
+- Django, python-dotenv: backend and settings.
+- python-docx, pypdf: file reading.
+- pytest, pytest-django: testing.
+- Bootstrap 5, HTMX: interface.
+- All demo data is made up.

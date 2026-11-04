@@ -1,24 +1,46 @@
-<!-- OWNER: Dev B -->
 {% extends "base.html" %}
-{% block title %}Readiness report - CONTINEX{% endblock %}
+{% block title %}Report - CONTINEX{% endblock %}
 {% block content %}
-<h2>Verify: departure rehearsal</h2>
-<p class="text-muted">{{ leaver }} leaves on {{ leave_date }}. Every finding links to its source line.</p>
+{# CONTEXT: project, leaver, leave_date, verdict, verdict_class, blocker_count, warning_count,
+   findings[{id, rule_label, severity, support, message, days_after_leave, detail_url}],
+   timeline[{date, label}], stats{quotes_verified, quotes_total, dropped}, review_url #}
+<h2>Rehearsal report</h2>
+<p class="text-muted">
+  Simulating {{ leaver }} leaving on {{ leave_date|date:"j M Y" }}.
+  Verdicts are never "safe". The best possible result is "Ready with conditions".
+</p>
 
 <div id="readiness">{% include "partials/blocker_counter.html" %}</div>
 
-<button class="btn btn-success mb-3"
-        hx-post="{{ rerun_url }}" hx-target="#readiness" hx-swap="innerHTML">
-  Re-run rehearsal
-</button>
+<p class="small text-muted">
+  Quotes verified in source: {{ stats.quotes_verified }}/{{ stats.quotes_total }}.
+  Dropped for failing verification: {{ stats.dropped }}.
+</p>
 
-{% for f in findings %}
-  {% include "partials/finding_row.html" %}
-{% empty %}
-  <div class="alert alert-secondary">No findings yet.</div>
-{% endfor %}
+<div class="row">
+  <div class="col-lg-7">
+    <h5>Findings</h5>
+    {% for f in findings %}
+      {% include "partials/finding_row.html" %}
+    {% empty %}
+      <div class="alert alert-success">No findings.</div>
+    {% endfor %}
+  </div>
+  <div class="col-lg-5">
+    <h5>Evidence</h5>
+    <div id="detail" class="card card-body text-muted">Click a finding to see the exact source quote.</div>
 
-<div class="small text-muted mt-4">
-  {{ dropped_count }} AI items were dropped because their quote was not found in the source.
+    <h5 class="mt-4">Timeline</h5>
+    <table class="table table-sm">
+      <tbody>
+      {% for t in timeline %}
+        <tr><td class="text-nowrap">{{ t.date }}</td><td>{{ t.label }}</td></tr>
+      {% empty %}
+        <tr><td class="text-muted">No dated items.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
-{% endblock %}
+
+<a class="btn

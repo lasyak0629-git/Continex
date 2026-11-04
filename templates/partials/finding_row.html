@@ -1,30 +1,17 @@
-<!-- OWNER: Dev B -->
-<div class="card mb-2 finding finding-{{ f.severity|lower }}">
-  <div class="card-body">
+{# CONTEXT: f{id, rule_label, severity, support, message, days_after_leave, detail_url} #}
+<div class="card mb-2 finding finding-{{ f.severity|lower }}" role="button"
+     hx-get="{{ f.detail_url }}" hx-target="#detail" hx-swap="innerHTML">
+  <div class="card-body py-2">
     <div class="d-flex justify-content-between">
-      <div>
+      <strong>{{ f.rule_label }}</strong>
+      <span>
         <span class="badge bg-{% if f.severity == 'BLOCKER' %}danger{% else %}warning text-dark{% endif %}">{{ f.severity }}</span>
         <span class="badge bg-secondary">{{ f.support }}</span>
-        {% if f.resolved_by_answer %}<span class="badge bg-success">answered</span>{% endif %}
-      </div>
-      <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse"
-              data-bs-target="#ev-{{ f.id }}">Show source</button>
+      </span>
     </div>
-    <p class="mb-1 mt-2">{{ f.message }}</p>
+    <div class="small">{{ f.message }}</div>
     {% if f.days_after_leave is not None %}
-      <div class="small text-muted">{{ f.days_after_leave }} days after the leave date</div>
+      <div class="small text-danger">{{ f.days_after_leave }} days after the person leaves</div>
     {% endif %}
-    <div class="collapse mt-2" id="ev-{{ f.id }}">
-      {% for item in f.evidence.all %}
-        <blockquote class="source-quote">
-          &ldquo;{{ item.quote }}&rdquo;
-          <footer class="small">{{ item.source.name }}
-            {% if item.quote_verified %}<span class="badge bg-success">quote verified</span>{% endif %}
-          </footer>
-        </blockquote>
-      {% empty %}
-        <div class="text-muted">Not found in the records.</div>
-      {% endfor %}
-    </div>
   </div>
 </div>

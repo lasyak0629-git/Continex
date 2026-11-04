@@ -1,1 +1,22 @@
-<!-- OWNER: Dev B -->
+{# CONTEXT: card{title, status, owner, next_step, tried, source_quote, source_name} #}
+<div class="card mb-3 continuation-card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <h5 class="card-title mb-1">{{ card.title }}</h5>
+      <span class="badge bg-{% if card.status == 'open' %}warning text-dark{% else %}success{% endif %}">{{ card.status }}</span>
+    </div>
+    {% if card.owner %}<div class="small text-muted">Owner: {{ card.owner }}</div>{% endif %}
+    <dl class="row mt-3 mb-2">
+      <dt class="col-sm-3">Next step</dt>
+      <dd class="col-sm-9">{{ card.next_step|default:"Not found in the records." }}</dd>
+      <dt class="col-sm-3">Already tried</dt>
+      <dd class="col-sm-9">{{ card.tried|default:"Not found in the records." }}</dd>
+    </dl>
+    {% if card.source_quote %}
+    <blockquote class="source-quote mb-0">
+      &ldquo;{{ card.source_quote }}&rdquo;
+      <footer class="small">{{ card.source_name }}</footer>
+    </blockquote>
+    {% endif %}
+  </div>
+</div>

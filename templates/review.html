@@ -1,1 +1,55 @@
-<!-- OWNER: Dev B -->
+{% extends "base.html" %}
+{% block title %}Review - CONTINEX{% endblock %}
+{% block content %}
+
+<h2>Review: answer, correct, approve</h2>
+<p class="text-muted">Answers are saved as "stated by [person]". They are not evidence.</p>
+
+<div id="readiness">{% include "partials/blocker_counter.html" %}</div>
+
+{% for q in questions %}
+<div class="card mb-2" id="q-{{ q.id }}">
+  <div class="card-body">
+    <p class="mb-1">{{ q.text }}</p>
+    {% if q.finding_message %}<div class="small text-muted mb-2">Finding: {{ q.finding_message }}</div>{% endif %}
+
+    {% if q.answer_text %}
+      <div class="alert alert-success py-2 mb-0">
+        Stated by <strong>{{ q.answered_by }}</strong>: {{ q.answer_text }}
+        <span class="badge bg-secondary ms-2">stated, not verified</span>
+      </div>
+    {% else %}
+      <form method="post" action="{{ q.answer_url }}" class="row g-2">
+        {% csrf_token %}
+        <div class="col-md-8">
+          <input class="form-control mb-1" name="owner" placeholder="New owner's name, e.g. Karthik">
+          <input class="form-control" name="answer" placeholder="Your answer, for example: Karthik will take over the domain">
+        </div>
+        <div class="col-md-4 d-flex gap-2">
+          <button class="btn btn-primary" name="action" value="answer">Answer</button>
+          <button class="btn btn-outline-danger" name="action" value="reject">Reject finding</button>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% empty %}
+  <div class="alert alert-secondary">No open questions.</div>
+{% endfor %}
+
+<div class="d-flex gap-2 mt-4">
+
+  <form method="post" action="{{ rerun_url }}">
+    {% csrf_token %}
+    <button class="btn btn-success">Re-run rehearsal</button>
+  </form>
+
+  <form method="post" action="{{ approve_url }}">
+    {% csrf_token %}
+    <button class="btn btn-dark">Approve handover</button>
+  </form>
+
+</div>
+
+<p class="small text-muted mt-2">Nothing is shared with the incoming person until a responsible person approves.</p>
+{% endblock %}

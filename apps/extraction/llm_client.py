@@ -26,7 +26,7 @@ class GeminiClient(LLMClient):
     def __init__(self):
         from google import genai
         self.client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-        self.model = os.getenv("GEMINI_MODEL", "")  # set in .env
+        self.model = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 
     def complete(self, system, user):
         from google.genai import types

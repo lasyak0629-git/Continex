@@ -1,1 +1,56 @@
-<!-- OWNER: Dev B -->
+{% extends "base.html" %}
+{% block title %}Handover - CONTINEX{% endblock %}
+{% block content %}
+
+{% comment %}CONTEXT: incoming, version, timeline, cards, received, receipt_url, versions, viewer_role{% endcomment %}
+
+{% if not handover %}
+  <div class="alert alert-secondary">No handover has been built yet. It is created once every item is reviewed and no blockers remain.</div>
+  <form method="post" action="{% url 'projects:handover_build' project.id %}">
+    {% csrf_token %}
+    <button class="btn btn-primary">Build handover</button>
+  </form>
+{% else %}
+
+<h2>Handover: what {{ leaver }} leaves behind</h2>
+<p class="text-muted">
+  <span class="badge bg-primary">Version {{ version.number }}</span>
+  Approved by {{ version.approved_by }} on {{ version.approved_at|date:"j M Y" }}.
+  You are viewing this as <strong>{{ viewer_role }}</strong>. Restricted items are not shown.
+</p>
+
+<h5 class="mt-4">Timeline</h5>
+<table class="table table-sm">
+  <thead><tr><th>Date</th><th>What</th></tr></thead>
+  <tbody>
+  {% for t in timeline %}
+    <tr><td>{{ t.date }}</td><td>{{ t.label }}</td></tr>
+  {% empty %}
+    <tr><td colspan="2" class="text-muted">No dated items.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h5 class="mt-4">Open tasks</h5>
+{% for card in cards %}
+  {% include "partials/continuation_card.html" %}
+{% empty %}
+  <div class="alert alert-secondary">No open tasks in the approved records.</div>
+{% endfor %}
+
+<h5 class="mt-4">Receipt</h5>
+{% if received %}
+  <div class="alert alert-success">You have confirmed receipt of this version.</div>
+{% else %}
+  <form method="post" action="{{ receipt_url }}">
+    {% csrf_token %}
+    <button class="btn btn-primary">I have received and read this handover</button>
+  </form>
+{% endif %}
+
+<h6 class="mt-4">Version history</h6>
+<ul class="small">
+  {% for v in versions %}<li>Version {{ v.number }}, {{ v.approved_at|date:"j M Y H:i" }}</li>{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

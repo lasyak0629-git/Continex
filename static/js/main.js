@@ -1,24 +1,23 @@
-// OWNER: Dev B
-// OWNER: Dev B
-let prevBlockers = null;
+(function () {
+  function readCount() {
+    var el = document.getElementById("blocker-number");
+    return el ? parseInt(el.textContent, 10) : null;
+  }
+  var previous = readCount();
 
-document.body.addEventListener("htmx:beforeSwap", () => {
-  const c = document.querySelector(".counter");
-  prevBlockers = c ? parseInt(c.dataset.value, 10) : null;
-});
-
-document.body.addEventListener("htmx:afterSwap", () => {
-  const el = document.querySelector(".counter");
-  if (!el || prevBlockers === null) return;
-  const to = parseInt(el.dataset.value, 10);
-  let cur = prevBlockers;
-  if (cur === to) return;
-  el.textContent = cur;
-  const step = cur > to ? -1 : 1;
-  const timer = setInterval(() => {
-    cur += step;
-    el.textContent = cur;
-    el.style.color = "#198754";
-    if (cur === to) clearInterval(timer);
-  }, 450);
-});
+  document.body.addEventListener("htmx:afterSwap", function (evt) {
+    var el = document.getElementById("blocker-number");
+    if (!el) return;
+    var target = parseInt(el.textContent, 10);
+    if (previous === null || isNaN(target) || previous === target) { previous = target; return; }
+    var from = previous, step = from > target ? -1 : 1, value = from;
+    el.textContent = value;
+    var timer = setInterval(function () {
+      value += step;
+      el.textContent = value;
+      el.classList.add("pulse");
+      setTimeout(function () { el.classList.remove("pulse"); }, 250);
+      if (value === target) { clearInterval(timer); previous = target; }
+    }, 700);
+  });
+})();
