@@ -1,46 +1,52 @@
 {% extends "base.html" %}
 {% block title %}Upload - CONTINEX{% endblock %}
 {% block content %}
+{% include "partials/stepper.html" with active=1 %}
 <h2>Connect: upload project records</h2>
 <p class="text-muted">Passwords and keys are hidden before any analysis. Restricted files are never sent to the AI.</p>
 
-<form method="post" enctype="multipart/form-data" class="card p-3 mb-4">
+<form method="post" enctype="multipart/form-data" class="card p-4 mb-4">
   {% csrf_token %}
   <div class="mb-3">
-    <label class="form-label">Files</label>
-    {{ form.files }}
+    <div class="dropzone" id="dz">
+      <div class="dz-icon">&#128196;</div>
+      <div class="dz-title">Drop files here or click to choose</div>
+      <div class="small text-muted">Meeting notes, task lists, guides, decision logs</div>
+      {{ form.files }}
+    </div>
+    <div id="file-list"></div>
     {{ form.files.errors }}
   </div>
   <div class="mb-3">
-    <label class="form-label">Access level for these files</label>
+    <label class="form-label fw-semibold">Who can see these files?</label>
     {{ form.access_level }}
   </div>
   <button class="btn btn-primary">Upload</button>
 </form>
 
 <h5>Uploaded files</h5>
-<table class="table table-sm">
-  <thead><tr><th>File</th><th>Access</th></tr></thead>
+<div class="card mb-4"><div class="table-responsive"><table class="table table-sm mb-0">
+  <thead><tr><th class="ps-3">File</th><th>Access</th></tr></thead>
   <tbody>
   {% for s in sources %}
-    <tr><td>{{ s.name }}</td>
-        <td><span class="badge bg-secondary">{{ s.sensitivity }}</span></td></tr>
+    <tr><td class="ps-3">{{ s.name }}</td>
+        <td><span class="badge badge-{{ s.sensitivity|lower }}">{{ s.sensitivity }}</span></td></tr>
   {% empty %}
-    <tr><td colspan="2" class="text-muted">No files yet.</td></tr>
+    <tr><td colspan="2" class="text-muted ps-3">No files yet.</td></tr>
   {% endfor %}
   </tbody>
-</table>
+</table></div></div>
 
 {% if sources %}
-<form method="post" action="{% url 'projects:extract' project.id %}" class="card card-body mt-4">
+<form method="post" action="{% url 'projects:extract' project.id %}" class="card card-body ai-panel" data-loading="Analysing... this can take up to a minute">
   {% csrf_token %}
   <h5>Analyse with AI</h5>
+  <p class="small text-muted mb-3">The AI reads your files, extracts tasks, owners and dates with source quotes, then the rehearsal checks what breaks after the leave date.</p>
   <div class="row g-2">
     <div class="col-md-5"><input class="form-control" name="leaver" placeholder="Who is leaving? e.g. Priya" required></div>
     <div class="col-md-4"><input class="form-control" type="date" name="leave_date" required></div>
     <div class="col-md-3"><button class="btn btn-success w-100">Extract and run rehearsal</button></div>
   </div>
-  <div class="small text-muted mt-2">Restricted files are never sent to the AI. Secrets are hidden first.</div>
 </form>
 {% endif %}
 {% endblock %}

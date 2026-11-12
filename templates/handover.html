@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Handover - CONTINEX{% endblock %}
 {% block content %}
-
-{% comment %}CONTEXT: incoming, version, timeline, cards, received, receipt_url, versions, viewer_role{% endcomment %}
+{% include "partials/stepper.html" with active=3 %}
 
 {% if not handover %}
+  <h2>Handover</h2>
   <div class="alert alert-secondary">No handover has been built yet. It is created once every item is reviewed and no blockers remain.</div>
   <form method="post" action="{% url 'projects:handover_build' project.id %}">
     {% csrf_token %}
@@ -12,44 +12,51 @@
   </form>
 {% else %}
 
-<h2>Handover: what {{ leaver }} leaves behind</h2>
-<p class="text-muted">
-  <span class="badge bg-primary">Version {{ version.number }}</span>
-  Approved by {{ version.approved_by }} on {{ version.approved_at|date:"j M Y" }}.
-  You are viewing this as <strong>{{ viewer_role }}</strong>. Restricted items are not shown.
-</p>
+<div class="card ho-header mb-4"><div class="card-body p-4">
+  <div class="text-muted small">HANDOVER</div>
+  <h2 class="mb-2">What {{ leaver }} leaves behind</h2>
+  <span class="badge">Version {{ version.number }}</span>
+  <span class="small text-muted ms-2">Approved by {{ version.approved_by }} on {{ version.approved_at|date:"j M Y" }}</span>
+  <div class="small text-muted mt-2">You are viewing this as <strong>{{ viewer_role }}</strong>. Restricted items are not shown.</div>
+</div></div>
 
-<h5 class="mt-4">Timeline</h5>
-<table class="table table-sm">
-  <thead><tr><th>Date</th><th>What</th></tr></thead>
-  <tbody>
+{% if data.hidden_total %}
+<div class="hidden-note mb-4">{{ data.hidden_total }} item(s) are hidden because of your access level.</div>
+{% endif %}
+
+<h5>Timeline</h5>
+{% if timeline %}
+<ul class="timeline">
   {% for t in timeline %}
-    <tr><td>{{ t.date }}</td><td>{{ t.label }}</td></tr>
-  {% empty %}
-    <tr><td colspan="2" class="text-muted">No dated items.</td></tr>
+    <li><div class="when">{{ t.date }}</div><div>{{ t.label }}</div></li>
   {% endfor %}
-  </tbody>
-</table>
+</ul>
+{% else %}
+  <div class="alert alert-secondary">No dated items are visible to you.</div>
+{% endif %}
 
 <h5 class="mt-4">Open tasks</h5>
 {% for card in cards %}
   {% include "partials/continuation_card.html" %}
 {% empty %}
-  <div class="alert alert-secondary">No open tasks in the approved records.</div>
+  <div class="alert alert-secondary">No open tasks are visible to you in the approved records.</div>
 {% endfor %}
 
-<h5 class="mt-4">Receipt</h5>
-{% if received %}
-  <div class="alert alert-success">You have confirmed receipt of this version.</div>
-{% else %}
-  <form method="post" action="{{ receipt_url }}">
-    {% csrf_token %}
-    <button class="btn btn-primary">I have received and read this handover</button>
-  </form>
-{% endif %}
+<h5 class="mt-4">Acknowledge receipt</h5>
+<div class="receipt-box">
+  {% if received %}
+    <div class="alert alert-success mb-0">You have confirmed receipt of this version.</div>
+  {% else %}
+    <p class="small text-muted">Confirm that you have received and read this handover.</p>
+    <form method="post" action="{{ receipt_url }}" class="m-0">
+      {% csrf_token %}
+      <button class="btn btn-primary">I have received and read this handover</button>
+    </form>
+  {% endif %}
+</div>
 
 <h6 class="mt-4">Version history</h6>
-<ul class="small">
+<ul class="small text-muted">
   {% for v in versions %}<li>Version {{ v.number }}, {{ v.approved_at|date:"j M Y H:i" }}</li>{% endfor %}
 </ul>
 {% endif %}

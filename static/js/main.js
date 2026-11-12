@@ -21,3 +21,40 @@
     }, 700);
   });
 })();
+
+document.addEventListener("DOMContentLoaded", function () {
+  // show chosen file names in the upload dropzone
+  var dz = document.getElementById("dz");
+  if (dz) {
+    var input = dz.querySelector("input[type=file]");
+    var list = document.getElementById("file-list");
+    if (input && list) {
+      input.addEventListener("change", function () {
+        list.innerHTML = "";
+        Array.prototype.forEach.call(input.files, function (f) {
+          var chip = document.createElement("span");
+          chip.className = "chip";
+          chip.textContent = f.name + " (" + Math.max(1, Math.round(f.size / 1024)) + " KB)";
+          list.appendChild(chip);
+        });
+      });
+    }
+    ["dragenter", "dragover"].forEach(function (e) {
+      dz.addEventListener(e, function () { dz.classList.add("over"); });
+    });
+    ["dragleave", "drop"].forEach(function (e) {
+      dz.addEventListener(e, function () { dz.classList.remove("over"); });
+    });
+  }
+
+  // loading state for slow actions (AI extraction)
+  document.querySelectorAll("form[data-loading]").forEach(function (form) {
+    form.addEventListener("submit", function () {
+      var btn = form.querySelector("button[type=submit], button:not([type])");
+      if (btn) {
+        btn.innerHTML = '<span class="spinner-inline"></span>' + (form.dataset.loading || "Working...");
+        setTimeout(function () { btn.disabled = true; }, 0);
+      }
+    });
+  });
+});
