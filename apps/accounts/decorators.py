@@ -4,7 +4,7 @@ from functools import wraps
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
-
+from django.core.exceptions import PermissionDenied
 from .permissions import ROLE_RANK, get_role
 
 
@@ -20,7 +20,7 @@ def project_role_required(min_role):
             if role is None:
                 raise Http404  # don't reveal that the project exists
             if ROLE_RANK[role] < ROLE_RANK[min_role]:
-                return HttpResponseForbidden("Your role cannot do this.")
+                raise PermissionDenied
             request.project = project
             request.project_role = role
             return view(request, project_id, *args, **kwargs)
