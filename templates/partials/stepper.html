@@ -1,0 +1,7 @@
+# Created by Dev:A
+
+<ul class="stepper">
+  <li class="{% if active == 1 %}on{% endif %}"><a href="{% url 'projects:upload' project.id %}"><span class="num">1</span>Upload</a></li>
+  <li class="{% if active == 2 %}on{% endif %}"><a href="{% url 'review:home' project.id %}"><span class="num">2</span>Review</a></li>
+  <li class="{% if active == 3 %}on{% endif %}"><a href="{% url 'projects:handover' project.id %}"><span class="num">3</span>Handover</a></li>
+</ul>
