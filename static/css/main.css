@@ -132,3 +132,55 @@ input[type=file]{padding:1.2rem;border:2px dashed #c7cdf5;border-radius:12px;bac
 .avatar{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#4f46e5,#22d3ee);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 46px}
 .project-card:hover{transform:translateY(-2px)}
 .project-card{transition:all .15s ease}
+
+/* ===== Login page ===== */
+.lp-bg{position:fixed;inset:0;z-index:-1;background:
+  radial-gradient(circle at 12% 18%,rgba(129,140,248,.35),transparent 45%),
+  radial-gradient(circle at 88% 78%,rgba(34,211,238,.22),transparent 45%),
+  linear-gradient(135deg,#eceaff,#e4ecff 55%,#f1f6ff)}
+.lp{position:relative;left:50%;transform:translateX(-50%);width:min(1180px,94vw);display:grid;grid-template-columns:1.2fr 1fr;gap:3rem;align-items:center;padding:1rem 0 2rem}
+.lp-hero{text-align:left}
+.lp-title{font-size:clamp(2.4rem,5vw,3.6rem);font-weight:800;letter-spacing:-.03em;color:#111936;margin:0}
+.lp-sub{font-size:1.2rem;color:#3b4672;margin:.5rem 0 .8rem;max-width:30ch}
+.lp-hl{color:#6d5ef0;font-weight:700}
+.lp-underline{width:70px;height:5px;border-radius:99px;background:linear-gradient(90deg,#6366f1,#22d3ee);margin-bottom:1.2rem}
+.lp-art{width:100%;max-width:460px;display:block;margin:.5rem 0 1.2rem}
+.lp-float{animation:lpfloat 5s ease-in-out infinite}
+.lp-d2{animation-delay:1.5s}
+@keyframes lpfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.lp-features{display:flex;flex-wrap:wrap;gap:0;max-width:520px}
+.lp-features>div{flex:1 1 150px;padding:.2rem 1rem;border-left:1px solid rgba(17,25,54,.15);font-size:.9rem;color:#111936}
+.lp-features>div:first-child{border-left:0;padding-left:0}
+.lp-ico{display:block;font-size:1.4rem;margin-bottom:.2rem}
+
+.lp-card{background:rgba(255,255,255,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.8);border-radius:24px;box-shadow:0 24px 60px rgba(99,102,241,.22);padding:2.2rem 2rem}
+.lp-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;margin:0 auto .8rem;box-shadow:0 8px 20px rgba(99,102,241,.4)}
+.lp-h2{text-align:center;font-weight:700;color:#111936;font-size:1.6rem;margin:0}
+.lp-p{text-align:center;color:#64748b;margin:.2rem 0 1.2rem}
+.lp-card label{display:block;font-weight:600;font-size:.9rem;color:#111936;margin:.8rem 0 .35rem}
+.lp-field{display:flex;align-items:center;gap:.6rem;background:#fff;border:1px solid #dfe3f5;border-radius:12px;padding:0 .85rem;transition:all .15s ease}
+.lp-field:focus-within{border-color:#6366f1;box-shadow:0 0 0 .22rem rgba(99,102,241,.18)}
+.lp-field input{flex:1;border:0;outline:0;background:transparent;padding:.8rem 0;font-size:.95rem;min-width:0}
+.lp-eye{background:none;border:0;padding:.2rem;cursor:pointer;display:flex}
+.lp-btn{width:100%;margin-top:1.3rem;border:0;border-radius:12px;padding:.85rem;font-weight:700;color:#fff;background:linear-gradient(135deg,#4f46e5,#7c3aed);box-shadow:0 10px 22px rgba(79,70,229,.35);transition:all .15s ease;cursor:pointer}
+.lp-btn:hover{transform:translateY(-1px);box-shadow:0 14px 26px rgba(79,70,229,.45)}
+.lp-btn:active{transform:none}
+.lp-btn:disabled{opacity:.65;cursor:not-allowed;transform:none}
+.lp-error{display:flex;justify-content:space-between;align-items:center;gap:.6rem;background:#fef2f2;border-left:4px solid #dc2626;color:#991b1b;border-radius:10px;padding:.65rem .9rem;font-size:.9rem;margin-bottom:.4rem}
+.lp-error button{background:none;border:0;color:#991b1b;font-size:1.3rem;line-height:1;cursor:pointer}
+.lp-demo{margin-top:1.4rem;background:#f1efff;border-left:4px solid #6366f1;border-radius:12px;padding:.8rem 1rem;font-size:.85rem;color:#3b4672}
+.lp-demo code{color:#6d28d9;font-family:ui-monospace,Menlo,Consolas,monospace;background:transparent;padding:0;font-weight:600}
+.lp-demo-t{margin-bottom:.4rem}
+
+@media (max-width:900px){
+  .lp{grid-template-columns:1fr;gap:1.5rem}
+  .lp-hero{text-align:center}
+  .lp-sub{margin-left:auto;margin-right:auto}
+  .lp-underline{margin-left:auto;margin-right:auto}
+  .lp-art{margin-left:auto;margin-right:auto;max-width:300px}
+  .lp-features{display:none}
+}
+@media (prefers-reduced-motion:reduce){.lp-float{animation:none}}
+
+/* ===== No-access page ===== */
+.noaccess-ico{width:72px;height:72px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;background:linear-gradient(135deg,#e0e3ff,#f1efff);box-shadow:0 8px 20px rgba(99,102,241,.2)}
