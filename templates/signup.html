@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Create account - CONTINEX{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6 col-lg-5">
+  <h2 class="text-center mb-1">Create your account</h2>
+  <p class="text-center text-muted">Start a handover or join one you were invited to.</p>
+  <form method="post" class="card card-body p-4 login-form">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="mb-3">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {{ field.errors }}
+        {% if field.help_text %}<div class="small text-muted">{{ field.help_text|safe }}</div>{% endif %}
+      </div>
+    {% endfor %}
+    <button class="btn btn-primary w-100">Create account</button>
+  </form>
+  <p class="text-center mt-3 small">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+</div></div>
+{% endblock %}

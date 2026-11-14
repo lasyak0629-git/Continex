@@ -72,6 +72,11 @@
       </div>
 
       <button type="submit" class="lp-btn">Log in &rarr;</button>
+
+      <div class="d-flex justify-content-between mt-3 small">
+        <a href="{% url 'password_reset' %}">Forgot password?</a>
+        <a href="{% url 'signup' %}">Create account</a>
+      </div>
     </form>
 
     <div class="lp-demo">

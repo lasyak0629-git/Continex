@@ -72,3 +72,12 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "CONTINEX <noreply@localhost>")
+PASSWORD_RESET_TIMEOUT = 3600  # reset links expire after 1 hour
