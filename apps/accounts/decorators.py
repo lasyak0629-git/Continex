@@ -8,7 +8,7 @@ from django.core.exceptions import PermissionDenied
 from .permissions import ROLE_RANK, get_role
 
 
-def project_role_required(min_role):
+def project_role_required(min_role, allow=()):
     """Only project members with at least `min_role` get in."""
     def decorator(view):
         @login_required
@@ -19,7 +19,7 @@ def project_role_required(min_role):
             role = get_role(request.user, project)
             if role is None:
                 raise Http404  # don't reveal that the project exists
-            if ROLE_RANK[role] < ROLE_RANK[min_role]:
+            if role not in allow and ROLE_RANK[role] < ROLE_RANK[min_role]:
                 raise PermissionDenied
             request.project = project
             request.project_role = role

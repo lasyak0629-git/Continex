@@ -18,7 +18,7 @@ from apps.rehearsal.engine import run_rehearsal
 from . import services
 
 
-@project_role_required("manager")
+@project_role_required("manager", allow=("leaver",))
 def review_home(request, project_id):
     project = request.project
     run = services.latest_run(project)
@@ -50,7 +50,7 @@ def review_home(request, project_id):
 
 
 @require_POST
-@project_role_required("manager")
+@project_role_required("manager", allow=("leaver",))
 def answer(request, project_id, item_id):
     item = get_object_or_404(ExtractedItem, pk=item_id, project=request.project)
     if request.POST.get("action") == "reject":
@@ -85,7 +85,7 @@ def approve_all(request, project_id):
 
 
 @require_POST
-@project_role_required("manager")
+@project_role_required("manager", allow=("leaver",))
 def item_action(request, project_id, item_id, action):
     item = get_object_or_404(ExtractedItem, pk=item_id, project=request.project)
     note = request.POST.get("note", "")
@@ -97,7 +97,7 @@ def item_action(request, project_id, item_id, action):
 
 
 @require_POST
-@project_role_required("manager")
+@project_role_required("manager", allow=("leaver",))
 def item_edit(request, project_id, item_id):
     item = get_object_or_404(ExtractedItem, pk=item_id, project=request.project)
     data = {k: request.POST[k] for k in ("text", "owner", "people", "reason", "date_text")
@@ -107,7 +107,7 @@ def item_edit(request, project_id, item_id):
 
 
 @require_POST
-@project_role_required("manager")
+@project_role_required("manager", allow=("leaver",))
 def rerun(request, project_id):
     project = request.project
     prev = services.latest_run(project)

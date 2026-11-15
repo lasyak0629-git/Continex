@@ -1,5 +1,5 @@
 # OWNER: Dev A
-
+from apps.projects import team_views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -18,12 +18,15 @@ project_patterns = [
     path("<int:project_id>/extract/", project_views.run_extract, name="extract"),
     path("<int:project_id>/handover/", handover_views.handover_page, name="handover"),
     path("<int:project_id>/handover/build/", handover_views.handover_build, name="handover_build"),
+    path("new/", team_views.project_create, name="create"),
+    path("<int:project_id>/team/", team_views.team, name="team"),
 ]
 
 urlpatterns = [
     path("", project_views.home, name="home"),
     path("login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"),
-        path("signup/", account_views.signup, name="signup"),
+    path("invite/<str:token>/", team_views.accept_invite, name="accept_invite"),
+    path("signup/", account_views.signup, name="signup"),
     path("password-reset/", auth_views.PasswordResetView.as_view(
         template_name="auth/password_reset_form.html",
         email_template_name="auth/password_reset_email.txt",

@@ -1,5 +1,5 @@
 # OWNER: Dev A
-ROLE_RANK = {"viewer": 1, "member": 2, "manager": 3, "owner": 4}
+ROLE_RANK = {"viewer": 1, "member": 2, "leaver": 2, "manager": 3, "owner": 4}
 SENSITIVITY_MIN_RANK = {"public": 1, "internal": 2, "restricted": 3}
 
 

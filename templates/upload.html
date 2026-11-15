@@ -43,8 +43,8 @@
   <h5>Analyse with AI</h5>
   <p class="small text-muted mb-3">The AI reads your files, extracts tasks, owners and dates with source quotes, then the rehearsal checks what breaks after the leave date.</p>
   <div class="row g-2">
-    <div class="col-md-5"><input class="form-control" name="leaver" placeholder="Who is leaving? e.g. Priya" required></div>
-    <div class="col-md-4"><input class="form-control" type="date" name="leave_date" required></div>
+    <div class="col-md-5"><input class="form-control" name="leaver" value="{{ project.leaver_name }}" placeholder="Who is leaving? e.g. Priya" required></div>
+    <div class="col-md-4"><input class="form-control" type="date" name="leave_date" value="{{ project.leave_date|date:'Y-m-d' }}" required></div>
     <div class="col-md-3"><button class="btn btn-success w-100">Extract and run rehearsal</button></div>
   </div>
 </form>

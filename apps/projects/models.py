@@ -1,11 +1,25 @@
 # OWNER: Dev A
 from django.conf import settings
 from django.db import models
+import secrets
+from datetime import timedelta
 
+from django.utils import timezone
 
 class Project(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
+
+    class ProjectType(models.TextChoices):
+        SOFTWARE = "software", "Software"
+        FINANCE = "finance", "Finance"
+        RESEARCH = "research", "Research"
+        OPERATIONS = "operations", "Operations"
+        OTHER = "other", "Other"
+    project_type = models.CharField(max_length=20, choices=ProjectType.choices, default=ProjectType.OTHER)
+    leaver_name = models.CharField(max_length=120, blank=True)
+    leave_date = models.DateField(null=True, blank=True)
+
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="created_projects"
     )
@@ -20,11 +34,16 @@ class Membership(models.Model):
         OWNER = "owner", "Owner"
         MANAGER = "manager", "Manager"
         MEMBER = "member", "Member"
+        LEAVER = "leaver", "Leaving person"
         VIEWER = "viewer", "Viewer"
 
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="memberships")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="memberships")
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.MEMBER)
+
+    invited_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="sent_invites"
+    )
 
     class Meta:
         unique_together = ("project", "user")
@@ -51,3 +70,22 @@ class Source(models.Model):
 
     def __str__(self):
         return self.name
+
+def make_token():
+    return secrets.token_urlsafe(32)
+
+
+class Invitation(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="invitations")
+    email = models.EmailField()
+    role = models.CharField(max_length=20, choices=Membership.Role.choices)
+    invited_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    token = models.CharField(max_length=64, unique=True, default=make_token)
+    created_at = models.DateTimeField(auto_now_add=True)
+    accepted_at = models.DateTimeField(null=True, blank=True)
+
+    def is_valid(self):
+        return self.accepted_at is None and self.created_at > timezone.now() - timedelta(days=7)
+
+    def __str__(self):
+        return f"{self.email} -> {self.project} ({self.role})"

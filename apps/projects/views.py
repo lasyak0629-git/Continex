@@ -1,4 +1,3 @@
-# OWNER: Dev B
 import json
 from pathlib import Path
 
@@ -19,8 +18,9 @@ from .forms import UploadForm
 from .models import Source
 from .services import extract_project
 
+from .models import Membership, Project
 
-@project_role_required("manager")
+@project_role_required("manager", allow=("leaver",))
 def upload(request, project_id):
     project = request.project
     form = UploadForm(request.POST or None, request.FILES or None)
@@ -37,7 +37,7 @@ def upload(request, project_id):
 
 
 @require_POST
-@project_role_required("manager")
+@project_role_required("manager", allow=("leaver",))
 def run_extract(request, project_id):
     leaver = request.POST.get("leaver", "").strip()
     try:
@@ -68,5 +68,6 @@ def eval_results(request):
 
 @login_required
 def home(request):
-    projects = Project.objects.filter(memberships__user=request.user).distinct()
-    return render(request, "home.html", {"projects": projects})
+    memberships = (Membership.objects.filter(user=request.user)
+                   .select_related("project", "invited_by").order_by("-project__created_at"))
+    return render(request, "home.html", {"memberships": memberships})

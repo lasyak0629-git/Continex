@@ -75,7 +75,7 @@
 
       <div class="d-flex justify-content-between mt-3 small">
         <a href="{% url 'password_reset' %}">Forgot password?</a>
-        <a href="{% url 'signup' %}">Create account</a>
+        <a href="{% url 'signup' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Create account</a>
       </div>
     </form>
 

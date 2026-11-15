@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="alert alert-danger">This invitation link has expired or was already used. Ask the project manager to send a new one.</div>
+<a class="btn btn-primary" href="{% url 'home' %}">Back to projects</a>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-7 col-lg-6">
+  <div class="card p-4 text-center">
+    <h2>You're invited</h2>
+    <p><strong>{{ inv.invited_by.username }}</strong> added you to <strong>{{ inv.project.name }}</strong> as <strong>{{ inv.get_role_display }}</strong>.</p>
+    <p class="text-muted">{{ role_text }}</p>
+    <form method="post">{% csrf_token %}<button class="btn btn-primary">Join project</button></form>
+  </div>
+</div></div>
+{% endblock %}
