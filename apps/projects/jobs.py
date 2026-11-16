@@ -40,6 +40,10 @@ def _run(job_id, project_id, user_id, leaver, leave_date):
         except Exception as ge:  # gaps are optional; never fail the whole analysis
             gap_note = f" Gap analysis skipped ({type(ge).__name__})."
 
+        if s.get("unconfirmed"):
+            gap_note += (f" {len(s['unconfirmed'])} photo/scan/audio file(s) were skipped "
+                         "because their transcript is not confirmed yet.")
+
         job.status = AnalysisJob.Status.DONE
         job.message = (
             f"{s['created']} items saved with verified quotes. {s['dropped']} dropped "

@@ -13,7 +13,7 @@ from apps.accounts.decorators import project_role_required
 from apps.audit.logger import log
 
 from .models import Project, Membership, Source, AnalysisJob
-
+from .media import after_upload
 from .forms import UploadForm
 from .services import extract_project
 
@@ -28,8 +28,9 @@ def upload(request, project_id):
     if request.method == "POST" and form.is_valid():
         level = form.cleaned_data["access_level"]  # public / internal / restricted
         for f in form.cleaned_data["files"]:
-            Source.objects.create(project=project, name=f.name, file=f,
-                                  sensitivity=level, uploaded_by=request.user)
+            src = Source.objects.create(project=project, name=f.name, file=f,
+                                        sensitivity=level, uploaded_by=request.user)
+            after_upload(src)
             log(request.user, "source.uploaded", project=project, file=f.name, sensitivity=level)
         return redirect("projects:upload", project_id=project.id)
     sources = Source.objects.filter(project=project)

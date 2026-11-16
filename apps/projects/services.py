@@ -1,6 +1,6 @@
 # Dev A created 
 from types import SimpleNamespace
-
+from apps.ingestion.redactor import redact
 from apps.accounts.permissions import can_view
 from apps.audit.logger import log
 from apps.extraction.extractor import run_extraction
@@ -11,17 +11,32 @@ from apps.ingestion.pipeline import prepare_sources
 
 def prepare_texts(project, user):
     """Read, permission-filter and redact sources. Restricted files are never sent."""
-    sources = list(project.sources.exclude(file=""))
-    by_name = {s.name: s for s in sources}
+    all_sources = list(project.sources.exclude(file=""))
+    by_name = {s.name: s for s in all_sources}
+    plain = [s for s in all_sources if s.kind == "text"]
     adapters = [SimpleNamespace(name=s.name, path=s.file.path, access_level=s.sensitivity)
-                for s in sources]
+                for s in plain]
     texts, stats = prepare_sources(
         adapters,
         allowed=lambda a: can_view(user, by_name[a.name]),
-        never_send=("restricted",),  # lowercase, matches Source.sensitivity
+        never_send=("restricted",),
     )
+    stats["unconfirmed"] = []
+    for s in all_sources:
+        if s.kind == "text":
+            continue
+        if s.sensitivity == "restricted":
+            stats["never_sent"].append(s.name)
+        elif not can_view(user, s):
+            stats["skipped_no_access"].append(s.name)
+        elif s.transcript_status != "confirmed":
+            stats["unconfirmed"].append(s.name)  # not analysed until a person confirms the text
+        else:
+            clean, n = redact(s.transcript)
+            stats["redactions"] += n
+            texts[s.name] = clean
     for name, text in texts.items():
-        by_name[name].content = text  # redacted text, kept for display
+        by_name[name].content = text
         by_name[name].save(update_fields=["content"])
     return texts, stats, by_name
 
@@ -30,7 +45,7 @@ def extract_project(project, user, client=None):
     texts, stats, by_name = prepare_texts(project, user)
     summary = {"created": 0, "dropped": 0, "rejected": 0, "injection": 0,
                "never_sent": stats["never_sent"], "skipped": stats["skipped_no_access"],
-               "redactions": stats["redactions"]}
+               "redactions": stats["redactions"], "unconfirmed": stats.get("unconfirmed", []),}
     if not texts:
         return summary
 

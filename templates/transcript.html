@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Check transcript - CONTINEX{% endblock %}
+{% block content %}
+{% include "partials/stepper.html" with active=1 %}
+<h2>Check the transcript</h2>
+<p class="text-muted">File: <strong>{{ src.name }}</strong>. The AI wrote this text from your {{ src.get_kind_display|lower }}.
+Compare it with the original, fix any mistakes, then confirm. Nothing is analysed until you confirm.</p>
+{% if src.transcript_status == "failed" %}
+  <div class="alert alert-danger">Transcription failed: {{ src.transcript_error }}</div>
+  <form method="post">{% csrf_token %}<button class="btn btn-primary" name="action" value="retry">Try again</button></form>
+{% elif src.transcript_status == "pending" %}
+  <div class="alert alert-secondary">Still transcribing. Go back to the upload page and try again in a moment.</div>
+{% else %}
+<form method="post" class="card card-body p-4">
+  {% csrf_token %}
+  <textarea name="transcript" rows="18" class="form-control">{{ src.transcript }}</textarea>
+  <div class="d-flex gap-2 mt-3">
+    <button class="btn btn-primary" name="action" value="confirm">Confirm transcript</button>
+    <a class="btn btn-outline-secondary" href="{% url 'projects:upload' project.id %}">Back</a>
+  </div>
+</form>
+{% endif %}
+{% endblock %}

@@ -7,6 +7,9 @@ class LLMClient:
     def complete(self, system: str, user: str) -> str:
         raise NotImplementedError
 
+    def transcribe(self, data: bytes, mime: str, instruction: str) -> str:
+        raise NotImplementedError("This AI provider cannot read images or audio.")
+
 
 class AnthropicClient(LLMClient):
     def __init__(self):
@@ -49,6 +52,24 @@ class GeminiClient(LLMClient):
                     )
                     return r.text
                 except Exception as e:  # 503 / 429 / timeouts: wait, then retry
+                    last = e
+                    time.sleep(3 * (attempt + 1))
+        raise last
+
+    def transcribe(self, data, mime, instruction):
+        import time
+        from google.genai import types
+        last = None
+        for model in self.models:
+            for attempt in range(3):
+                try:
+                    r = self.client.models.generate_content(
+                        model=model,
+                        contents=[types.Part.from_bytes(data=data, mime_type=mime), instruction],
+                        config=types.GenerateContentConfig(max_output_tokens=8000),
+                    )
+                    return (r.text or "").strip()
+                except Exception as e:
                     last = e
                     time.sleep(3 * (attempt + 1))
         raise last

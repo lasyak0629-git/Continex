@@ -25,23 +25,37 @@
 </form>
 
 <h5>Uploaded files</h5>
+<div id="files" hx-get="{% url 'projects:upload' project.id %}"
+     hx-trigger="every 4s [document.querySelector('.tr-pending')]" hx-select="#files" hx-target="#files" hx-swap="outerHTML">
 <div class="card mb-4"><div class="table-responsive"><table class="table table-sm mb-0">
-  <thead><tr><th class="ps-3">File</th><th>Access</th></tr></thead>
+  <thead><tr><th class="ps-3">File</th><th>Access</th><th>Status</th></tr></thead>
   <tbody>
   {% for s in sources %}
-    <tr><td class="ps-3">{{ s.name }}</td>
-        <td><span class="badge badge-{{ s.sensitivity|lower }}">{{ s.sensitivity }}</span></td></tr>
+    <tr class="{% if s.transcript_status == 'pending' %}tr-pending{% endif %}">
+      <td class="ps-3">{{ s.name }}</td>
+      <td><span class="badge badge-{{ s.sensitivity|lower }}">{{ s.sensitivity }}</span></td>
+      <td>
+        {% if s.kind == "text" %}<span class="small text-muted">Ready</span>
+        {% elif s.transcript_status == "pending" %}<span class="spinner-border spinner-border-sm"></span> <span class="small">Transcribing...</span>
+        {% elif s.transcript_status == "ready" %}<a class="btn btn-sm btn-outline-primary" href="{% url 'projects:transcript' project.id s.id %}">Review transcript</a>
+        {% elif s.transcript_status == "confirmed" %}<span class="badge bg-success">Transcript confirmed</span> <a class="small" href="{% url 'projects:transcript' project.id s.id %}">edit</a>
+        {% elif s.transcript_status == "skipped" %}<span class="small text-muted">Restricted: not sent to the AI. Upload a typed version.</span>
+        {% else %}<a class="small text-danger" href="{% url 'projects:transcript' project.id s.id %}">Failed: see details</a>{% endif %}
+      </td>
+    </tr>
   {% empty %}
-    <tr><td colspan="2" class="text-muted ps-3">No files yet.</td></tr>
+    <tr><td colspan="3" class="text-muted ps-3">No files yet.</td></tr>
   {% endfor %}
   </tbody>
 </table></div></div>
+</div>
 
 {% if sources %}
 <form method="post" action="{% url 'projects:extract' project.id %}" class="card card-body ai-panel" data-loading="Starting...">
   {% csrf_token %}
   <h5>Analyse with AI</h5>
-  <p class="small text-muted mb-3">The AI reads your files, extracts tasks, owners and dates with source quotes, then the rehearsal checks what breaks after the leave date.</p>
+  <div class="small text-muted">Notes, task lists, scans, photos of handwriting, voice notes</div>
+  <div class="small text-muted mt-1">Photos, scans and audio are sent to the AI to be turned into text. Don't upload ones that show passwords.</div>
   <div class="row g-2">
     <div class="col-md-5"><input class="form-control" name="leaver" value="{{ project.leaver_name }}" placeholder="Who is leaving? e.g. Priya" required></div>
     <div class="col-md-4"><input class="form-control" type="date" name="leave_date" value="{{ project.leave_date|date:'Y-m-d' }}" required></div>

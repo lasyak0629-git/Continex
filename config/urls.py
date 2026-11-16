@@ -11,7 +11,7 @@ from apps.handover import downloads
 from apps.handover import views as handover_views
 from apps.projects import views as project_views
 
-from apps.projects import stage_views
+from apps.projects import stage_views, media_views
 
 from django.urls import reverse_lazy
 from apps.accounts import views as account_views
@@ -29,6 +29,7 @@ project_patterns = [
     path("<int:project_id>/submit-to-manager/", stage_views.submit_to_manager, name="submit_to_manager"),
     path("<int:project_id>/gaps/<int:gap_id>/", stage_views.gap_answer, name="gap_answer"),
     path("<int:project_id>/handover/download/<str:fmt>/", downloads.handover_download, name="handover_download"),
+    path("<int:project_id>/sources/<int:source_id>/transcript/", media_views.transcript, name="transcript"),
 ]
 
 urlpatterns = [

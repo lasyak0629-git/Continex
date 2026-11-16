@@ -24,8 +24,10 @@ ACCESS_CHOICES = [
 class UploadForm(forms.Form):
     files = MultipleFileField()
     access_level = forms.ChoiceField(choices=ACCESS_CHOICES, widget=forms.Select(attrs={"class": "form-select"}))
-    ALLOWED_EXT = {".txt", ".md", ".csv", ".docx", ".pdf"}
-    MAX_MB, MAX_FILES = 10, 20
+    ALLOWED_EXT = {".txt", ".md", ".csv", ".docx", ".pdf", ".png", ".jpg", ".jpeg", ".webp",
+                   ".mp3", ".wav", ".ogg", ".aac", ".flac"}
+    MEDIA_EXT = {".png", ".jpg", ".jpeg", ".webp", ".mp3", ".wav", ".ogg", ".aac", ".flac"}
+    MAX_MB, MAX_MEDIA_MB, MAX_FILES = 10, 15, 20
 
     def clean_files(self):
         files = self.cleaned_data["files"]
@@ -35,9 +37,10 @@ class UploadForm(forms.Form):
             ext = "." + f.name.rsplit(".", 1)[-1].lower() if "." in f.name else ""
             if ext not in self.ALLOWED_EXT:
                 raise forms.ValidationError(
-                    f"'{f.name}' is not supported. Use: .txt, .md, .csv, .docx or .pdf.")
-            if f.size > self.MAX_MB * 1024 * 1024:
-                raise forms.ValidationError(f"'{f.name}' is larger than {self.MAX_MB} MB.")
+                    f"'{f.name}' is not supported. Use: .txt, .md, .csv, .docx or .pdf." "images (.png, .jpg, .jpeg, .webp) or audio (.mp3, .wav, .ogg, .aac, .flac).")
+            limit = self.MAX_MEDIA_MB if ext in self.MEDIA_EXT else self.MAX_MB
+            if f.size > limit * 1024 * 1024:
+                raise forms.ValidationError(f"'{f.name}' is larger than {limit} MB.")
         return files
 
 class ProjectForm(forms.ModelForm):

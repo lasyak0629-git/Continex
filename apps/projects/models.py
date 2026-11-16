@@ -75,6 +75,17 @@ class Source(models.Model):
     )
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
+    class Kind(models.TextChoices):
+        TEXT = "text", "Text document"
+        IMAGE = "image", "Image"
+        AUDIO = "audio", "Audio"
+        SCAN = "scan", "Scanned PDF"
+
+    kind = models.CharField(max_length=10, choices=Kind.choices, default=Kind.TEXT)
+    transcript = models.TextField(blank=True)
+    transcript_status = models.CharField(max_length=10, default="none")  # none/pending/ready/confirmed/failed/skipped
+    transcript_error = models.CharField(max_length=300, blank=True)
+
     def __str__(self):
         return self.name
 
