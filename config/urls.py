@@ -6,6 +6,8 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
+from apps.handover import downloads
+
 from apps.handover import views as handover_views
 from apps.projects import views as project_views
 
@@ -26,6 +28,7 @@ project_patterns = [
     path("<int:project_id>/send-to-leaver/", stage_views.send_to_leaver, name="send_to_leaver"),
     path("<int:project_id>/submit-to-manager/", stage_views.submit_to_manager, name="submit_to_manager"),
     path("<int:project_id>/gaps/<int:gap_id>/", stage_views.gap_answer, name="gap_answer"),
+    path("<int:project_id>/handover/download/<str:fmt>/", downloads.handover_download, name="handover_download"),
 ]
 
 urlpatterns = [

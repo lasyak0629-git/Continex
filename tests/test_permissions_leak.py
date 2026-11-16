@@ -68,6 +68,15 @@ class LeakTests(TestCase):
         self.assertFalse(can_view(self.viewer, secret))
         self.assertTrue(can_view(self.manager, secret))
         self.assertFalse(can_view(self.outsider, secret))
+    def test_document_respects_role_and_renders(self):
+        from apps.handover.document import build_document, render_docx, render_pdf
+        doc = build_document(self.viewer, self.handover)
+        flat = json.dumps(doc)
+        self.assertIn(PUBLIC, flat)
+        self.assertNotIn(INTERNAL, flat)
+        self.assertNotIn(SECRET, flat)
+        self.assertTrue(render_pdf(doc).startswith(b"%PDF"))
+        self.assertTrue(render_docx(doc).startswith(b"PK"))
 
 
 class GateTests(TestCase):

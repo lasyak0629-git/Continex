@@ -11,3 +11,5 @@ gunicorn
 whitenoise
 google-genai
 python-dotenv
+python-docx 
+reportlab

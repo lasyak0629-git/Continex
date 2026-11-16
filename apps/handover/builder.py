@@ -64,12 +64,23 @@ def build_handover(project, user):
         .exclude(item__status=ExtractedItem.Status.REJECTED)
         .select_related("item__source")
     ]
+
+    sens = {s.name: s.sensitivity for s in project.sources.all()}
+    gaps = [
+        {"question": g.question, "why": g.why, "quote": g.quote, "source": g.source_name,
+         "status": g.status, "answer": g.answer,
+         "answered_by": g.answered_by.get_username() if g.answered_by else "",
+         "sensitivity": sens.get(g.source_name, "restricted")}  # unknown source: most restrictive
+        for g in project.gaps.exclude(status="dismissed").select_related("answered_by")
+    ]
     content = {
         "leaver": run.leaver,
         "leave_date": run.leave_date.isoformat(),
         "sections": sections,
         "warnings": warnings,
+        "gaps": gaps,
     }
+    
     handover = Handover.objects.create(
         project=project, run=run, version=project.handovers.count() + 1,
         leaver=run.leaver, leave_date=run.leave_date, content=content, created_by=user,

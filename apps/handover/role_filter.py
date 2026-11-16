@@ -24,12 +24,17 @@ def filter_content(content, role):
     warnings = [w for w in content["warnings"] if can_see(role, w["sensitivity"])]
     hidden_total += len(content["warnings"]) - len(warnings)
 
+    all_gaps = content.get("gaps", [])  # older handovers have none
+    gaps = [g for g in all_gaps if can_see(role, g["sensitivity"])]
+    hidden_total += len(all_gaps) - len(gaps)
+
     return {
         "leaver": content["leaver"],
         "leave_date": content["leave_date"],
         "role": role,
         "sections": sections,
         "warnings": warnings,
+        "gaps": gaps,
         "hidden_total": hidden_total,  # only a count, never the hidden text
     }
 
