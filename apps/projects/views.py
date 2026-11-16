@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 
-from datetime import date
+from datetime import date, timedelta
 from apps.rehearsal.engine import run_rehearsal
 from apps.accounts.decorators import project_role_required
 from apps.audit.logger import log
@@ -15,16 +15,11 @@ from apps.audit.logger import log
 from .models import Project, Membership, Source, AnalysisJob
 
 from .forms import UploadForm
-from .models import Source
 from .services import extract_project
 
-from .models import Membership, Project
-
-from datetime import timedelta
 from django.utils import timezone
 
 from .jobs import start_analysis
-from .models import AnalysisJob
 
 @project_role_required("manager", allow=("leaver",))
 def upload(request, project_id):
