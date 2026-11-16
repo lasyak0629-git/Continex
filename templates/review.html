@@ -7,6 +7,59 @@
 
 <div id="readiness">{% include "partials/blocker_counter.html" %}</div>
 
+<div class="card card-body mb-3">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div>
+      <span class="badge bg-secondary">Stage</span>
+      <strong class="ms-1">{{ project.get_stage_display }}</strong>
+      <div class="small text-muted">
+        {% if stage == "leaver_review" %}Waiting for the leaving person to finish the first review.
+        {% elif stage == "manager_review" %}First review done. You can approve when ready.
+        {% else %}Review the findings, or send them to the leaving person first.{% endif %}
+      </div>
+    </div>
+    <div class="d-flex gap-2">
+      {% if role == "manager" or role == "owner" %}
+        {% if stage != "leaver_review" and has_leaver %}
+        <form method="post" action="{% url 'projects:send_to_leaver' project.id %}" class="m-0">{% csrf_token %}
+          <button class="btn btn-outline-primary">Send to leaving person</button></form>
+        {% endif %}
+      {% endif %}
+      {% if stage == "leaver_review" %}
+        <form method="post" action="{% url 'projects:submit_to_manager' project.id %}" class="m-0">{% csrf_token %}
+          <button class="btn btn-primary">Submit first review to manager</button></form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% if gaps %}
+<h5 class="mt-4">Missing information</h5>
+<p class="text-muted small">Questions the AI raised from your documents. Answers are recorded as stated by the person, not verified.</p>
+{% for g in gaps %}
+<div class="card mb-2 {% if g.status == 'open' %}q-open{% else %}q-done{% endif %}">
+  <div class="card-body">
+    <div class="q-tag mb-1">{% if g.status == "open" %}Open{% elif g.status == "answered" %}Answered{% else %}Not relevant{% endif %}</div>
+    <p class="mb-1 fw-semibold">{{ g.question }}</p>
+    {% if g.why %}<div class="small text-muted">Why it matters: {{ g.why }}</div>{% endif %}
+    <blockquote class="source-quote my-2">&ldquo;{{ g.quote }}&rdquo;<footer class="small">{{ g.source_name }}</footer></blockquote>
+    {% if g.status == "answered" %}
+      <div class="alert alert-success py-2 mb-0">Stated by <strong>{{ g.answered_by.username }}</strong>: {{ g.answer }}
+        <span class="badge bg-secondary ms-2">stated, not verified</span></div>
+    {% elif g.status == "open" %}
+      <form method="post" action="{% url 'projects:gap_answer' project.id g.id %}" class="row g-2">{% csrf_token %}
+        <div class="col-md-9"><input class="form-control" name="answer" placeholder="Your answer"></div>
+        <div class="col-md-3 d-flex gap-2">
+          <button class="btn btn-primary" name="action" value="answer">Answer</button>
+          <button class="btn btn-outline-secondary" name="action" value="dismiss">Not relevant</button>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+
 {% for q in questions %}
 <div class="card mb-2 {% if q.answer_text %}q-done{% else %}q-open{% endif %}" id="q-{{ q.id }}">
   <div class="card-body">

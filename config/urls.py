@@ -9,6 +9,8 @@ from django.urls import include, path
 from apps.handover import views as handover_views
 from apps.projects import views as project_views
 
+from apps.projects import stage_views
+
 from django.urls import reverse_lazy
 from apps.accounts import views as account_views
 
@@ -21,6 +23,9 @@ project_patterns = [
     path("new/", team_views.project_create, name="create"),
     path("<int:project_id>/team/", team_views.team, name="team"),
     path("<int:project_id>/analysis/", project_views.analysis_status, name="analysis_status"),
+    path("<int:project_id>/send-to-leaver/", stage_views.send_to_leaver, name="send_to_leaver"),
+    path("<int:project_id>/submit-to-manager/", stage_views.submit_to_manager, name="submit_to_manager"),
+    path("<int:project_id>/gaps/<int:gap_id>/", stage_views.gap_answer, name="gap_answer"),
 ]
 
 urlpatterns = [

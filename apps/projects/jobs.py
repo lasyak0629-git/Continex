@@ -31,6 +31,15 @@ def _run(job_id, project_id, user_id, leaver, leave_date):
         user = get_user_model().objects.get(pk=user_id)
         s = extract_project(project, user)
         run_rehearsal(project, leaver, leave_date, user=user)
+
+        gap_note = ""
+        try:
+            from .gaps import generate_gaps
+            n = generate_gaps(project, user)
+            gap_note = f" {n} gap question(s) raised."
+        except Exception as ge:  # gaps are optional; never fail the whole analysis
+            gap_note = f" Gap analysis skipped ({type(ge).__name__})."
+
         job.status = AnalysisJob.Status.DONE
         job.message = (
             f"{s['created']} items saved with verified quotes. {s['dropped']} dropped "

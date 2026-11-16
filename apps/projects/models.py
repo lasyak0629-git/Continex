@@ -20,6 +20,13 @@ class Project(models.Model):
     leaver_name = models.CharField(max_length=120, blank=True)
     leave_date = models.DateField(null=True, blank=True)
 
+    class Stage(models.TextChoices):
+        DRAFT = "draft", "Preparing"
+        LEAVER_REVIEW = "leaver_review", "With the leaving person"
+        MANAGER_REVIEW = "manager_review", "With the manager"
+
+    stage = models.CharField(max_length=20, choices=Stage.choices, default=Stage.DRAFT)
+
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="created_projects"
     )
@@ -106,3 +113,23 @@ class AnalysisJob(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+class GapQuestion(models.Model):
+    class Status(models.TextChoices):
+        OPEN = "open", "Open"
+        ANSWERED = "answered", "Answered"
+        DISMISSED = "dismissed", "Not relevant"
+
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="gaps")
+    question = models.CharField(max_length=300)
+    why = models.CharField(max_length=300, blank=True)
+    quote = models.TextField(blank=True)
+    source_name = models.CharField(max_length=255, blank=True)
+    status = models.CharField(max_length=12, choices=Status.choices, default=Status.OPEN)
+    answer = models.TextField(blank=True)
+    answered_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    answered_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["status", "created_at"]

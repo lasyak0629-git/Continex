@@ -45,6 +45,9 @@ def review_home(request, project_id):
         "warning_count": warnings, "verdict": verdict, "verdict_class": vclass,
         "approve_url": reverse("review:approve_all", args=[project_id]),
         "rerun_url": reverse("review:rerun", args=[project_id]),
+        "gaps": project.gaps.all(), "stage": project.stage,
+        "has_leaver": project.memberships.filter(role="leaver").exists(),
+        "role": request.project_role,
     })
 
 
@@ -68,6 +71,11 @@ def answer(request, project_id, item_id):
 @project_role_required("manager")
 def approve_all(request, project_id):
     project = request.project
+
+    if project.stage == "leaver_review":
+        messages.error(request, "Waiting for the leaving person's review. They must submit it first.")
+        return redirect("review:home", project_id=project_id)
+
     for it in project.items.filter(status=ExtractedItem.Status.PENDING):
         services.approve_item(it, request.user, "Approved with handover")
     prev = services.latest_run(project)
