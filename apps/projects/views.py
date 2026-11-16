@@ -12,13 +12,19 @@ from apps.rehearsal.engine import run_rehearsal
 from apps.accounts.decorators import project_role_required
 from apps.audit.logger import log
 
-from .models import Project
+from .models import Project, Membership, Source, AnalysisJob
 
 from .forms import UploadForm
 from .models import Source
 from .services import extract_project
 
 from .models import Membership, Project
+
+from datetime import timedelta
+from django.utils import timezone
+
+from .jobs import start_analysis
+from .models import AnalysisJob
 
 @project_role_required("manager", allow=("leaver",))
 def upload(request, project_id):
@@ -35,7 +41,6 @@ def upload(request, project_id):
     return render(request, "upload.html",
                   {"project": project, "form": form, "sources": sources})
 
-
 @require_POST
 @project_role_required("manager", allow=("leaver",))
 def run_extract(request, project_id):
@@ -47,18 +52,26 @@ def run_extract(request, project_id):
     if not leaver or not leave_date:
         messages.error(request, "Enter who is leaving and their last working day.")
         return redirect("projects:upload", project_id=project_id)
-    try:
-        s = extract_project(request.project, request.user)
-        run_rehearsal(request.project, leaver, leave_date, user=request.user)
-    except Exception as e:  # API down, bad key, unreadable file
-        messages.error(request, f"Analysis failed ({type(e).__name__}): {e}")
-        return redirect("projects:upload", project_id=project_id)
-    messages.success(
-        request,
-        f"{s['created']} items saved with verified quotes. {s['dropped']} dropped "
-        f"(quote not found in source), {s['rejected']} rejected, "
-        f"{s['redactions']} secrets hidden, {s['injection']} hidden instruction(s) ignored.")
-    return redirect("review:home", project_id=project_id)
+    busy = AnalysisJob.objects.filter(
+        project=request.project, status__in=["queued", "running"],
+        created_at__gt=timezone.now() - timedelta(minutes=15))
+    if not busy.exists():
+        start_analysis(request.project, request.user, leaver, leave_date)
+    return redirect("projects:analysis_status", project_id=project_id)
+
+
+@project_role_required("manager", allow=("leaver",))
+def analysis_status(request, project_id):
+    job = AnalysisJob.objects.filter(project=request.project).first()
+    if job and job.status in ("queued", "running") \
+            and job.created_at < timezone.now() - timedelta(minutes=15):
+        job.status = "failed"
+        job.message = "Timed out. The server may have restarted. Please run the analysis again."
+        job.save()
+    ctx = {"project": request.project, "job": job}
+    if request.headers.get("HX-Request"):
+        return render(request, "partials/job_status.html", ctx)
+    return render(request, "analysis_status.html", ctx)
 
 @login_required
 def eval_results(request):

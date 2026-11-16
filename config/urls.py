@@ -20,6 +20,7 @@ project_patterns = [
     path("<int:project_id>/handover/build/", handover_views.handover_build, name="handover_build"),
     path("new/", team_views.project_create, name="create"),
     path("<int:project_id>/team/", team_views.team, name="team"),
+    path("<int:project_id>/analysis/", project_views.analysis_status, name="analysis_status"),
 ]
 
 urlpatterns = [

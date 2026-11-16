@@ -24,6 +24,21 @@ ACCESS_CHOICES = [
 class UploadForm(forms.Form):
     files = MultipleFileField()
     access_level = forms.ChoiceField(choices=ACCESS_CHOICES, widget=forms.Select(attrs={"class": "form-select"}))
+    ALLOWED_EXT = {".txt", ".md", ".csv", ".docx", ".pdf"}
+    MAX_MB, MAX_FILES = 10, 20
+
+    def clean_files(self):
+        files = self.cleaned_data["files"]
+        if len(files) > self.MAX_FILES:
+            raise forms.ValidationError(f"Upload at most {self.MAX_FILES} files at a time.")
+        for f in files:
+            ext = "." + f.name.rsplit(".", 1)[-1].lower() if "." in f.name else ""
+            if ext not in self.ALLOWED_EXT:
+                raise forms.ValidationError(
+                    f"'{f.name}' is not supported. Use: .txt, .md, .csv, .docx or .pdf.")
+            if f.size > self.MAX_MB * 1024 * 1024:
+                raise forms.ValidationError(f"'{f.name}' is larger than {self.MAX_MB} MB.")
+        return files
 
 class ProjectForm(forms.ModelForm):
     class Meta:

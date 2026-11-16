@@ -17,7 +17,6 @@ from apps.rehearsal.engine import run_rehearsal
 
 from . import services
 
-
 @project_role_required("manager", allow=("leaver",))
 def review_home(request, project_id):
     project = request.project

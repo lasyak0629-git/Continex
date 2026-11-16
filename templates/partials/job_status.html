@@ -1,0 +1,18 @@
+<div id="job" class="card p-4 text-center"
+  {% if job.status == "queued" or job.status == "running" %}hx-get="{% url 'projects:analysis_status' project.id %}" hx-trigger="every 3s" hx-swap="outerHTML"{% endif %}>
+  {% if not job %}
+    <h4>No analysis has been run yet</h4>
+    <a class="btn btn-primary mt-3" href="{% url 'projects:upload' project.id %}">Go to upload</a>
+  {% elif job.status == "queued" or job.status == "running" %}
+    <h4><span class="spinner-border spinner-border-sm me-2"></span>Analysing your documents</h4>
+    <p class="text-muted mb-0">Reading files, hiding secrets, extracting facts and verifying quotes. This can take a minute. You can leave this page open.</p>
+  {% elif job.status == "done" %}
+    <h4>Analysis complete</h4>
+    <p class="text-muted">{{ job.message }}</p>
+    <a class="btn btn-primary mt-2" href="/projects/{{ project.id }}/review/">Continue to review</a>
+  {% else %}
+    <h4>Analysis failed</h4>
+    <div class="alert alert-danger text-start">{{ job.message }}</div>
+    <a class="btn btn-outline-primary" href="{% url 'projects:upload' project.id %}">Back to upload</a>
+  {% endif %}
+</div>
