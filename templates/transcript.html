@@ -5,6 +5,11 @@
 <h2>Check the transcript</h2>
 <p class="text-muted">File: <strong>{{ src.name }}</strong>. The AI wrote this text from your {{ src.get_kind_display|lower }}.
 Compare it with the original, fix any mistakes, then confirm. Nothing is analysed until you confirm.</p>
+<p>
+  <a href="{% url 'projects:source_file' project.id src.id %}">
+    Download the original file
+  </a>
+</p>
 {% if src.transcript_status == "failed" %}
   <div class="alert alert-danger">Transcription failed: {{ src.transcript_error }}</div>
   <form method="post">{% csrf_token %}<button class="btn btn-primary" name="action" value="retry">Try again</button></form>

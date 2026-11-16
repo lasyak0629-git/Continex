@@ -32,7 +32,9 @@
   <tbody>
   {% for s in sources %}
     <tr class="{% if s.transcript_status == 'pending' %}tr-pending{% endif %}">
-      <td class="ps-3">{{ s.name }}</td>
+      <td class="ps-3">
+        <a href="{% url 'projects:source_file' project.id s.id %}" class="text-decoration-none">{{ s.name }}</a>
+      </td>
       <td><span class="badge badge-{{ s.sensitivity|lower }}">{{ s.sensitivity }}</span></td>
       <td>
         {% if s.kind == "text" %}<span class="small text-muted">Ready</span>

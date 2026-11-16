@@ -1,5 +1,7 @@
 from django import forms
 from .models import Project
+from .scan import scan
+from .validators import check_content
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
@@ -41,6 +43,12 @@ class UploadForm(forms.Form):
             limit = self.MAX_MEDIA_MB if ext in self.MEDIA_EXT else self.MAX_MB
             if f.size > limit * 1024 * 1024:
                 raise forms.ValidationError(f"'{f.name}' is larger than {limit} MB.")
+            problem = check_content(f, ext)
+            if problem:
+                raise forms.ValidationError(f"'{f.name}' {problem}.")
+            problem = scan(f)
+            if problem:
+                raise forms.ValidationError(f"'{f.name}' {problem}")
         return files
 
 class ProjectForm(forms.ModelForm):

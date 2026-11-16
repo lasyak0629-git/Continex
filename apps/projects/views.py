@@ -21,6 +21,14 @@ from django.utils import timezone
 
 from .jobs import start_analysis
 
+def unique_name(project, name):
+    existing = set(project.sources.values_list("name", flat=True))
+    p, candidate, n = Path(name), name[:200], 2
+    while candidate in existing:
+        candidate = f"{p.stem[:180]} ({n}){p.suffix}"
+        n += 1
+    return candidate
+
 @project_role_required("manager", allow=("leaver",))
 def upload(request, project_id):
     project = request.project
@@ -28,7 +36,7 @@ def upload(request, project_id):
     if request.method == "POST" and form.is_valid():
         level = form.cleaned_data["access_level"]  # public / internal / restricted
         for f in form.cleaned_data["files"]:
-            src = Source.objects.create(project=project, name=f.name, file=f,
+            src = Source.objects.create(project=project, name=unique_name(project, f.name), file=f,
                                         sensitivity=level, uploaded_by=request.user)
             after_upload(src)
             log(request.user, "source.uploaded", project=project, file=f.name, sensitivity=level)

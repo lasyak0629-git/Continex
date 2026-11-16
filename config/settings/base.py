@@ -1,8 +1,9 @@
 # OWNER: Dev A
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
-
+from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / ".env")
 
@@ -25,6 +26,7 @@ INSTALLED_APPS = [
     "apps.review",
     "apps.handover",
     "apps.audit",
+    "axes",
 ]
 
 AUTH_USER_MODEL = "accounts.User"
@@ -37,6 +39,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -81,3 +84,14 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "CONTINEX <noreply@localhost>")
 PASSWORD_RESET_TIMEOUT = 3600  # reset links expire after 1 hour
+
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+AXES_ENABLED = "test" not in sys.argv  # test client logins don't go through the request
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = timedelta(minutes=30)
+AXES_RESET_ON_SUCCESS = True
+AXES_LOCKOUT_PARAMETERS = [["ip_address", "username"]]
+AXES_LOCKOUT_TEMPLATE = "lockout.html"

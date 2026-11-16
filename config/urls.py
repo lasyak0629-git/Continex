@@ -1,7 +1,6 @@
 # OWNER: Dev A
 from apps.projects import team_views
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
@@ -10,7 +9,7 @@ from apps.handover import downloads
 
 from apps.handover import views as handover_views
 from apps.projects import views as project_views
-
+from apps.projects import file_views
 from apps.projects import stage_views, media_views
 
 from django.urls import reverse_lazy
@@ -30,6 +29,7 @@ project_patterns = [
     path("<int:project_id>/gaps/<int:gap_id>/", stage_views.gap_answer, name="gap_answer"),
     path("<int:project_id>/handover/download/<str:fmt>/", downloads.handover_download, name="handover_download"),
     path("<int:project_id>/sources/<int:source_id>/transcript/", media_views.transcript, name="transcript"),
+    path("<int:project_id>/sources/<int:source_id>/file/", file_views.source_file, name="source_file"),
 ]
 
 urlpatterns = [
@@ -54,6 +54,3 @@ urlpatterns = [
     path("projects/<int:project_id>/review/", include("apps.review.urls")),
     path("projects/", include((project_patterns, "projects"))),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
