@@ -17,8 +17,6 @@ from apps.extraction.extractor import run_extraction
 from apps.extraction.llm_client import FakeClient, get_client
 from apps.extraction.quote_verifier import _norm
 
-# The eval runs without a database, so it uses a plain role check.
-# Brunda's real can_view(user, source) is tested in tests/test_permissions_leak.py.
 _LEVELS = {"EVERYONE": 0, "LEADS_ONLY": 1, "RESTRICTED": 2}
 _CLEARANCE = {"CONTRIBUTOR": 0, "INCOMING": 0, "LEAD": 2}
 

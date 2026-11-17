@@ -1,5 +1,4 @@
 # OWNER: Dev B
-# OWNER: Dev B
 from apps.extraction.schemas import ExtractedItemSchema
 from apps.extraction.quote_verifier import verify_items
 

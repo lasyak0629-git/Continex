@@ -5,7 +5,10 @@ from apps.audit.logger import log
 from apps.extraction.models import ExtractedItem
 from apps.rehearsal.rules.base import owned_by_leaver
 from apps.review.services import can_finalize, latest_run
+from datetime import timedelta
 
+from django.conf import settings
+from django.utils import timezone
 from .models import Handover
 
 SECTIONS = [
@@ -85,6 +88,9 @@ def build_handover(project, user):
         project=project, run=run, version=project.handovers.count() + 1,
         leaver=run.leaver, leave_date=run.leave_date, content=content, created_by=user,
     )
+    project.delete_after = timezone.now() + timedelta(days=settings.RETENTION_DAYS)
+    project.warned_at = None
+    project.save(update_fields=["delete_after", "warned_at"])
     log(user, "handover.built", project=project, target=handover,
         version=handover.version, items=len(approved))
     return handover

@@ -35,6 +35,9 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
+    delete_after = models.DateTimeField(null=True, blank=True)
+    warned_at = models.DateTimeField(null=True, blank=True)
+
 
 class Membership(models.Model):
     class Role(models.TextChoices):

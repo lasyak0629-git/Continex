@@ -13,3 +13,7 @@ google-genai
 python-dotenv
 python-docx 
 reportlab
+django-axes
+clamd
+psycopg[binary]
+dj-database-url

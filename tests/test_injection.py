@@ -1,5 +1,4 @@
 # OWNER: Dev B
-# OWNER: Dev B
 import json
 import pytest
 from apps.extraction.injection_guard import flag_injection, parse_llm_output

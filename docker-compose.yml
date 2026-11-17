@@ -1,0 +1,46 @@
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: continex
+      POSTGRES_USER: continex
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    restart: unless-stopped
+
+  clamav:
+    image: clamav/clamav:stable
+    volumes: [clamdb:/var/lib/clamav]
+    restart: unless-stopped
+
+  web:
+    build: .
+    image: continex-web
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://continex:${POSTGRES_PASSWORD}@db:5432/continex
+      MEDIA_ROOT: /app/media
+      CLAMD_HOST: clamav
+      CLAMD_REQUIRED: "1"
+    ports: ["8000:8000"]
+    volumes: [media:/app/media]
+    depends_on: [db, clamav]
+    restart: unless-stopped
+
+  scheduler:
+    image: continex-web
+    pull_policy: never
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://continex:${POSTGRES_PASSWORD}@db:5432/continex
+      MEDIA_ROOT: /app/media
+    volumes: [media:/app/media]
+    command: sh -c "while true; do python manage.py purge_projects; sleep 86400; done"
+    depends_on: [db]
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  clamdb:
+  media:

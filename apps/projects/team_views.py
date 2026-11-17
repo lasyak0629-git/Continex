@@ -12,6 +12,12 @@ from apps.audit.logger import log
 from .forms import InviteForm, ProjectForm
 from .models import Invitation, Membership
 
+from datetime import timedelta
+
+from django.views.decorators.http import require_POST
+
+from .retention import delete_project_data
+
 ROLE_TEXT = {
     "leaver": "the person leaving: you will upload what you know and answer the first review questions",
     "viewer": "a viewer: you will be able to read and download the handover",
@@ -78,3 +84,26 @@ def accept_invite(request, token):
         messages.success(request, f"You joined \"{inv.project.name}\".")
         return redirect("home")
     return render(request, "invite_accept.html", {"inv": inv, "role_text": ROLE_TEXT.get(inv.role, "")})
+
+@require_POST
+@project_role_required("manager")
+def extend_retention(request, project_id):
+    p = request.project
+    p.delete_after = max(p.delete_after or timezone.now(), timezone.now()) + timedelta(days=30)
+    p.warned_at = None
+    p.save(update_fields=["delete_after", "warned_at"])
+    log(request.user, "retention.extended", project=p)
+    messages.success(request, "Retention extended by 30 days.")
+    return redirect("projects:team", project_id=p.id)
+
+
+@require_POST
+@project_role_required("manager")
+def delete_project(request, project_id):
+    p = request.project
+    if request.POST.get("confirm", "").strip() != p.name:
+        messages.error(request, "The name you typed does not match. Nothing was deleted.")
+        return redirect("projects:team", project_id=p.id)
+    delete_project_data(p, actor=request.user, reason="manager")
+    messages.success(request, "The project and all its data were deleted.")
+    return redirect("home")

@@ -72,7 +72,13 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/login/"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", BASE_DIR / "media"))
+RETENTION_DAYS = int(os.getenv("RETENTION_DAYS", "90"))
+RETENTION_WARN_DAYS = 14
+SITE_URL = os.getenv("SITE_URL", "http://localhost:8000")
+if os.getenv("DATABASE_URL"):
+    import dj_database_url
+    DATABASES = {"default": dj_database_url.parse(os.environ["DATABASE_URL"], conn_max_age=600)}
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 

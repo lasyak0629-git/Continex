@@ -27,5 +27,24 @@
   {% for i in pending %}<tr><td class="ps-3">{{ i.email }}</td><td>{{ i.get_role_display }}</td><td class="text-muted small">expires 7 days after {{ i.created_at|date:"j M" }}</td></tr>{% endfor %}
 </table></div>
 {% endif %}
+
+<h5 class="mt-4">Data retention</h5>
+<div class="card card-body mb-3">
+  <p class="mb-2">
+    {% if project.delete_after %}All data for this project will be deleted on <strong>{{ project.delete_after|date:"j M Y" }}</strong>.
+    You can keep working on it, and building a new handover restarts the clock.
+    {% else %}No deletion date yet. It is set when the first handover is built.{% endif %}
+  </p>
+  <form method="post" action="{% url 'projects:extend_retention' project.id %}" class="mb-3">{% csrf_token %}
+    <button class="btn btn-outline-primary btn-sm">Keep for 30 more days</button>
+  </form>
+  <form method="post" action="{% url 'projects:delete_project' project.id %}"
+        onsubmit="return confirm('Delete this project and ALL its files permanently?');" class="row g-2">
+    {% csrf_token %}
+    <div class="col-md-8"><input class="form-control" name="confirm" placeholder="Type the project name to delete it: {{ project.name }}"></div>
+    <div class="col-md-4"><button class="btn btn-outline-danger w-100">Delete project</button></div>
+  </form>
+</div>
+
 <a class="btn btn-outline-primary mt-4" href="{% url 'projects:upload' project.id %}">Next: upload documents</a>
 {% endblock %}
