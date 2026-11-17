@@ -24,6 +24,10 @@ class ExtractedItem(models.Model):
     confidence = models.FloatField(default=0.0)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
+    next_step = models.TextField(blank=True)
+    next_step_quote = models.TextField(blank=True)
+    tried = models.TextField(blank=True)
+    tried_quote = models.TextField(blank=True)
 
     def __str__(self):
         return f"[{self.item_type}] {self.text[:60]}"

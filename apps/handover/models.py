@@ -18,3 +18,11 @@ class Handover(models.Model):
 
     def __str__(self):
         return f"{self.project} handover v{self.version} ({self.leaver})"
+
+class HandoverReceipt(models.Model):
+    handover = models.ForeignKey(Handover, on_delete=models.CASCADE, related_name="receipts")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    acknowledged_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("handover", "user")

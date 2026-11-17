@@ -32,6 +32,7 @@ project_patterns = [
     path("<int:project_id>/sources/<int:source_id>/file/", file_views.source_file, name="source_file"),
     path("<int:project_id>/extend-retention/", team_views.extend_retention, name="extend_retention"),
     path("<int:project_id>/delete/", team_views.delete_project, name="delete_project"),
+    path("<int:project_id>/handover/receipt/", handover_views.handover_receipt, name="handover_receipt"),
 ]
 
 urlpatterns = [

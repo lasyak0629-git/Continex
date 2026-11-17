@@ -71,6 +71,12 @@
       <button class="btn btn-primary">I have received and read this handover</button>
     </form>
   {% endif %}
+
+  {% if receipts %}
+  <div class="small mt-3"><strong>Acknowledged by:</strong>
+    {% for r in receipts %}{{ r.user.username }} ({{ r.acknowledged_at|date:"j M Y H:i" }}){% if not forloop.last %}, {% endif %}{% endfor %}
+  </div>
+  {% endif %}
 </div>
 
 <h6 class="mt-4">Version history</h6>

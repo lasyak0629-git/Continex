@@ -1,3 +1,4 @@
+# OWNER Dev A
 import threading
 
 from django.db import close_old_connections
@@ -43,6 +44,13 @@ def _run(job_id, project_id, user_id, leaver, leave_date):
         if s.get("unconfirmed"):
             gap_note += (f" {len(s['unconfirmed'])} photo/scan/audio file(s) were skipped "
                          "because their transcript is not confirmed yet.")
+
+        try:
+            from .details import enrich_tasks
+            k = enrich_tasks(project, user)
+            gap_note += f" Next steps found for {k} task(s)."
+        except Exception as de:  # optional step: never fail the whole analysis
+            gap_note += f" Task details skipped ({type(de).__name__})."
 
         job.status = AnalysisJob.Status.DONE
         job.message = (

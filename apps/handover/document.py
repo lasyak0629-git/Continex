@@ -21,6 +21,8 @@ def _entry(key, e):
     if key in ("task", "responsibility"):
         meta.append("Owner: needs a new owner (currently the person leaving)" if e["needs_new_owner"]
                     else f"Owner: {e['owner'] or 'not named in the records'}")
+        meta.append(f"Next step: {e.get('next_step') or 'Not found in the records.'}")
+        meta.append(f"Already tried: {e.get('tried') or 'Not found in the records.'}")
     elif key == "access_pointer" and e["owner"]:
         meta.append(f"Held by: {e['owner']}")
     when = e["date_text"] or ""

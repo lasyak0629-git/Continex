@@ -42,6 +42,8 @@ def _entry(item, leaver):
         "date": item.date_resolved.isoformat() if item.date_resolved else None,
         "reason": item.reason,
         "needs_new_owner": item.item_type in LEAVER_OWNED_TYPES and owned_by_leaver(item, ctx),
+        "next_step": item.next_step,
+        "tried": item.tried,
     }
 
 
@@ -91,6 +93,22 @@ def build_handover(project, user):
     project.delete_after = timezone.now() + timedelta(days=settings.RETENTION_DAYS)
     project.warned_at = None
     project.save(update_fields=["delete_after", "warned_at"])
+    _notify_ready(project, handover)
     log(user, "handover.built", project=project, target=handover,
         version=handover.version, items=len(approved))
     return handover
+
+def _notify_ready(project, handover):
+    from django.conf import settings
+    from django.core.mail import send_mass_mail
+
+    emails = [m.user.email for m in project.memberships.select_related("user") if m.user.email]
+    if not emails:
+        return
+    body = (f"A handover (version {handover.version}) for {handover.leaver} is ready in "
+            f"\"{project.name}\".\nOpen it: {settings.SITE_URL}/projects/{project.id}/handover/")
+    try:  # one message per person, so addresses are not shared
+        send_mass_mail([(f"Handover ready: {project.name}", body, settings.DEFAULT_FROM_EMAIL, [e])
+                        for e in emails])
+    except Exception:
+        pass

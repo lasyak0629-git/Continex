@@ -3,9 +3,11 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
+from django.urls import reverse
 
+from apps.audit.logger import log
+from .models import HandoverReceipt
 from apps.accounts.decorators import project_role_required
-
 from .builder import HandoverBlocked, build_handover
 from .role_filter import handover_for_user
 
@@ -15,6 +17,11 @@ def handover_page(request, project_id):
     project = request.project
     handover = project.handovers.first()  # newest
     ctx = {"project": project, "handover": handover, "received": False, "receipt_url": ""}
+    if handover:
+        ctx["received"] = handover.receipts.filter(user=request.user).exists()
+        ctx["receipt_url"] = reverse("projects:handover_receipt", args=[project_id])
+        if request.project_role in ("manager", "owner"):
+            ctx["receipts"] = handover.receipts.select_related("user")
     if handover:
         data = handover_for_user(request.user, handover)  # role-filtered, never raw content
         entries = [e for s in data["sections"] for e in s["entries"]]
@@ -31,7 +38,7 @@ def handover_page(request, project_id):
                 ({"date": e["date"], "label": e["text"]} for e in entries if e["date"]),
                 key=lambda t: t["date"]),
             "cards": [{"title": t["text"], "status": "open", "owner": t["owner"],
-                    "next_step": "", "tried": "",
+                    "next_step": t.get("next_step", ""), "tried": t.get("tried", ""),
                     "source_quote": t["quote"], "source_name": t["source"]}
                     for t in tasks],
             "data": data,
@@ -52,3 +59,14 @@ def handover_build(request, project_id):
         messages.success(request, f"Handover v{h.version} built.")
     return redirect("projects:handover", project_id=project_id)
 
+@require_POST
+@project_role_required("viewer")
+def handover_receipt(request, project_id):
+    handover = request.project.handovers.first()
+    if handover:
+        _, created = HandoverReceipt.objects.get_or_create(handover=handover, user=request.user)
+        if created:
+            log(request.user, "handover.acknowledged", project=request.project,
+                target=handover, version=handover.version)
+        messages.success(request, "Your receipt has been recorded.")
+    return redirect("projects:handover", project_id=project_id)
