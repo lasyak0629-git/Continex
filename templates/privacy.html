@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Privacy Notice - CONTINEX{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-8">
+<h2>Privacy Notice</h2>
+<p class="text-muted">Version {{ version }}. Questions: {{ contact }}</p>
+
+<h5 class="mt-4">What we store</h5>
+<ul>
+  <li><strong>Your account:</strong> username, email address and a securely hashed password.</li>
+  <li><strong>Projects:</strong> project details, who is on the team and their roles.</li>
+  <li><strong>Your documents:</strong> files you upload, the text we read from them, and the results of analysing them (tasks, owners, dates, decisions, questions and answers, transcripts).</li>
+  <li><strong>Handovers:</strong> each approved version, who approved it, who downloaded it and who confirmed receipt.</li>
+  <li><strong>Activity log:</strong> who did what and when, to keep decisions accountable.</li>
+</ul>
+
+<h5 class="mt-4">How AI is used</h5>
+<p>To analyse a project, we send document text to a third-party AI service (Google Gemini). Photos, scans and audio are sent as files to be turned into text, and they cannot be cleaned first.
+We try to hide passwords and keys in text before it is sent, but this cannot be guaranteed. Files marked <em>restricted</em> are never sent to the AI.
+The AI provider handles data under its own terms, which we do not control. <strong>Do not upload anything you are not allowed to share with a third-party AI service.</strong>
+AI results can be wrong, so people review and approve everything before it becomes a handover.</p>
+
+<h5 class="mt-4">Who can see your data</h5>
+<p>Only people on the project, and only what their role and each file's access level allow. We do not sell your data or use it for advertising.</p>
+
+<h5 class="mt-4">How long we keep it</h5>
+<p>A project and all its files are deleted <strong> 90 days after the latest handover is built</strong> by default. We email the managers 14 days before.
+Managers can extend this, or delete a project immediately. Deleting removes the files and analysed data. The activity log keeps a bare record (time, action and person) with its details removed.</p>
+
+<h5 class="mt-4">Your choices</h5>
+<ul>
+  <li>Managers can delete a project at any time from its Team page.</li>
+  <li>To close your account or ask about your data, email {{ contact }}.</li>
+</ul>
+
+<h5 class="mt-4">Security</h5>
+<p>We use hashed passwords, login attempt limits, permission checks on every request, protected file access, upload checks and encrypted connections. No system is perfectly secure.</p>
+
+<h5 class="mt-4">Changes</h5>
+<p>If this notice changes in a meaningful way, we will update the version above and tell you.</p>
+</div></div>
+{% endblock %}

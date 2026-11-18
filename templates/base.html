@@ -31,6 +31,12 @@
 </nav>
 
 <main class="container pb-5">
+  {% if user.is_authenticated and not user.email_verified and not user.is_superuser %}
+    <div class="alert alert-warning d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <span>Please confirm your email address to create projects and join invitations.</span>
+      <a class="btn btn-sm btn-outline-dark" href="{% url 'verify_notice' %}">Confirm email</a>
+    </div>
+  {% endif %}
   {% if messages %}
     {% for m in messages %}
       <div class="alert alert-{% if m.tags == 'error' %}danger{% else %}{{ m.tags }}{% endif %}">{{ m }}</div>
@@ -38,6 +44,9 @@
   {% endif %}
   {% block content %}{% endblock %}
 </main>
+<footer class="container pb-4 small text-muted text-center">
+  CONTINEX &middot; <a href="{% url 'terms' %}">Terms</a> &middot; <a href="{% url 'privacy' %}">Privacy</a>
+</footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{% static 'js/main.js' %}"></script>
 </body>

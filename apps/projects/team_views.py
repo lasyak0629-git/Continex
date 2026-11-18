@@ -5,7 +5,9 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from datetime import timedelta
 
+from apps.accounts.verification import is_verified
 from apps.accounts.decorators import project_role_required
 from apps.audit.logger import log
 
@@ -27,6 +29,8 @@ ROLE_TEXT = {
 
 @login_required
 def project_create(request):
+    if not is_verified(request.user):
+        return redirect("verify_notice")
     form = ProjectForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         p = form.save(commit=False)
@@ -74,6 +78,10 @@ def accept_invite(request, token):
     inv = get_object_or_404(Invitation, token=token)
     if not inv.is_valid():
         return render(request, "invite_invalid.html", status=410)
+    if not is_verified(request.user):
+        return redirect("verify_notice")
+    if request.user.email.strip().lower() != inv.email.strip().lower():
+        return render(request, "invite_wrong_account.html", {"inv": inv}, status=403)
     if request.method == "POST":
         Membership.objects.get_or_create(
             project=inv.project, user=request.user,

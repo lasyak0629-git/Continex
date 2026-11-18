@@ -3,17 +3,27 @@
 {% block content %}
 <div class="row justify-content-center"><div class="col-md-6 col-lg-5">
   <h2 class="text-center mb-1">Create your account</h2>
-  <p class="text-center text-muted">Start a handover or join one you were invited to.</p>
+  <p class="text-center text-muted">Start a handover, or join one you were invited to.</p>
   <form method="post" class="card card-body p-4 login-form">
     {% csrf_token %}
     {% for field in form %}
+      {% if field.name != "accept_terms" %}
       <div class="mb-3">
         <label for="{{ field.id_for_label }}">{{ field.label }}</label>
         {{ field }}
         {{ field.errors }}
         {% if field.help_text %}<div class="small text-muted">{{ field.help_text|safe }}</div>{% endif %}
       </div>
+      {% endif %}
     {% endfor %}
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" name="accept_terms" id="id_accept_terms">
+      <label class="form-check-label" for="id_accept_terms" style="font-weight:400">
+        I agree to the <a href="{% url 'terms' %}" target="_blank">Terms</a> and the
+        <a href="{% url 'privacy' %}" target="_blank">Privacy Notice</a>.
+      </label>
+      {{ form.accept_terms.errors }}
+    </div>
     <button class="btn btn-primary w-100">Create account</button>
   </form>
   <p class="text-center mt-3 small">Already have an account? <a href="{% url 'login' %}">Log in</a></p>

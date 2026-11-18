@@ -1,3 +1,4 @@
+# OWNER Dev As
 import json
 from pathlib import Path
 
@@ -6,7 +7,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
+from datetime import timedelta
 
+from django.utils import timezone
+
+from apps.accounts.verification import is_verified
+
+from .models import Invitation
 from datetime import date, timedelta
 from apps.rehearsal.engine import run_rehearsal
 from apps.accounts.decorators import project_role_required
@@ -87,4 +94,9 @@ def eval_results(request):
 def home(request):
     memberships = (Membership.objects.filter(user=request.user)
                    .select_related("project", "invited_by").order_by("-project__created_at"))
-    return render(request, "home.html", {"memberships": memberships})
+    invites = []
+    if is_verified(request.user) and request.user.email:
+        invites = Invitation.objects.filter(
+            email__iexact=request.user.email, accepted_at__isnull=True,
+            created_at__gt=timezone.now() - timedelta(days=7)).select_related("project", "invited_by")
+    return render(request, "home.html", {"memberships": memberships, "invites": invites})

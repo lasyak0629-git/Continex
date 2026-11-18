@@ -101,3 +101,6 @@ AXES_COOLOFF_TIME = timedelta(minutes=30)
 AXES_RESET_ON_SUCCESS = True
 AXES_LOCKOUT_PARAMETERS = [["ip_address", "username"]]
 AXES_LOCKOUT_TEMPLATE = "lockout.html"
+
+TERMS_VERSION = "2026-11"
+CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", "contact@example.com")

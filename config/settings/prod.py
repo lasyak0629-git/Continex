@@ -26,3 +26,8 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
 DATA_UPLOAD_MAX_NUMBER_FILES = 25
 AXES_IPWARE_PROXY_COUNT = 1  # one proxy (Render) sits in front
 AXES_IPWARE_META_PRECEDENCE_ORDER = ["HTTP_X_FORWARDED_FOR", "REMOTE_ADDR"]
+
+if EMAIL_BACKEND.endswith("console.EmailBackend"):
+    import warnings
+    warnings.warn("EMAIL_BACKEND is the console backend: verification and invite emails are only "
+                  "printed to the log. Configure SMTP before real users sign up.")

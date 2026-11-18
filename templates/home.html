@@ -6,6 +6,14 @@
   <p class="text-muted mb-0">Upload records, review the findings, then hand over safely.</p></div>
   <a class="btn btn-primary" href="{% url 'projects:create' %}">+ New project</a>
 </div>
+
+{% for i in invites %}
+<div class="alert alert-info d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+  <div><strong>{{ i.invited_by.username }}</strong> added you to <strong>{{ i.project.name }}</strong> as <strong>{{ i.get_role_display }}</strong>.</div>
+  <a class="btn btn-primary btn-sm" href="{% url 'accept_invite' i.token %}">View invitation</a>
+</div>
+{% endfor %}
+
 <div class="mt-4">
 {% for m in memberships %}
 {% with p=m.project %}

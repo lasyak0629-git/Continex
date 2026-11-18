@@ -38,6 +38,11 @@ project_patterns = [
 urlpatterns = [
     path("", project_views.home, name="home"),
     path("login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"),
+    path("verify/<str:token>/", account_views.verify_email, name="verify_email"),
+    path("verify-email/", account_views.verify_notice, name="verify_notice"),
+    path("resend-verification/", account_views.resend_verification, name="resend_verification"),
+    path("terms/", account_views.terms, name="terms"),
+    path("privacy/", account_views.privacy, name="privacy"),
     path("invite/<str:token>/", team_views.accept_invite, name="accept_invite"),
     path("signup/", account_views.signup, name="signup"),
     path("password-reset/", auth_views.PasswordResetView.as_view(
