@@ -1,6 +1,5 @@
 # OWNER Dev A 
 from django.test import TestCase
-
 from apps.accounts.models import User
 from apps.projects.models import Membership, Project, Source
 from apps.projects.services import prepare_texts

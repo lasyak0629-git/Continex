@@ -1,3 +1,4 @@
+<!-- OWNER: Dev A -->
 <div id="job" class="card p-4 text-center"
   {% if job.status == "queued" or job.status == "running" %}hx-get="{% url 'projects:analysis_status' project.id %}" hx-trigger="every 3s" hx-swap="outerHTML"{% endif %}>
   {% if not job %}

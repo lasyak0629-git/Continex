@@ -85,12 +85,6 @@ def analysis_status(request, project_id):
     return render(request, "analysis_status.html", ctx)
 
 @login_required
-def eval_results(request):
-    path = Path(settings.BASE_DIR) / "demo_data" / "eval_report.json"
-    report = json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
-    return render(request, "eval_results.html", {"r": report})
-
-@login_required
 def home(request):
     memberships = (Membership.objects.filter(user=request.user)
                    .select_related("project", "invited_by").order_by("-project__created_at"))

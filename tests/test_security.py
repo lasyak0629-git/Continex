@@ -4,7 +4,6 @@ import tempfile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from django.urls import reverse
-
 from apps.accounts.models import User
 from apps.projects.models import Membership, Project, Source
 from apps.projects.validators import check_content

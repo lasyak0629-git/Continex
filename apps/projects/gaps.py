@@ -1,9 +1,9 @@
+# OWNER Dev A
 import json
 import re
 
 from apps.audit.logger import log
 from apps.extraction.llm_client import get_client
-
 from .models import GapQuestion
 from .services import prepare_texts
 

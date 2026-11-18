@@ -1,14 +1,11 @@
 # Owner Dev: A
 import mimetypes
-
 from django.core.exceptions import PermissionDenied
 from django.http import FileResponse, Http404
 from django.shortcuts import get_object_or_404
-
 from apps.accounts.decorators import project_role_required
 from apps.accounts.permissions import can_view
 from apps.audit.logger import log
-
 from .models import Source
 
 

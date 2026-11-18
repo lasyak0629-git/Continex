@@ -4,7 +4,6 @@ import tempfile
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
-
 from apps.accounts.models import User
 from apps.extraction.models import ExtractedItem
 from apps.projects.details import enrich_tasks

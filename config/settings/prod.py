@@ -1,5 +1,5 @@
 import os
-
+from django.core.exceptions import ImproperlyConfigured
 from .base import *  # noqa
 
 DEBUG = False
@@ -31,3 +31,10 @@ if EMAIL_BACKEND.endswith("console.EmailBackend"):
     import warnings
     warnings.warn("EMAIL_BACKEND is the console backend: verification and invite emails are only "
                   "printed to the log. Configure SMTP before real users sign up.")
+
+if not os.getenv("LLM_PROVIDER"):
+    raise ImproperlyConfigured("Set LLM_PROVIDER=gemini in the environment.")
+if os.getenv("LLM_PROVIDER") == "fake":
+    raise ImproperlyConfigured("LLM_PROVIDER=fake is for development only.")
+if os.getenv("LLM_PROVIDER") == "gemini" and not os.getenv("GEMINI_API_KEY"):
+    raise ImproperlyConfigured("GEMINI_API_KEY is missing.")

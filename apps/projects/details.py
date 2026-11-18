@@ -3,7 +3,6 @@ import json
 
 from apps.audit.logger import log
 from apps.extraction.llm_client import get_client
-
 from .gaps import _norm, _parse
 from .services import prepare_texts
 

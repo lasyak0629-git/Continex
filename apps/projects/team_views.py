@@ -1,3 +1,4 @@
+# OWNER Dev A
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -6,18 +7,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from datetime import timedelta
-
 from apps.accounts.verification import is_verified
 from apps.accounts.decorators import project_role_required
 from apps.audit.logger import log
-
 from .forms import InviteForm, ProjectForm
 from .models import Invitation, Membership
-
 from datetime import timedelta
-
 from django.views.decorators.http import require_POST
-
 from .retention import delete_project_data
 
 ROLE_TEXT = {

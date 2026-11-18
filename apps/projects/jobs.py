@@ -3,7 +3,6 @@ import threading
 
 from django.db import close_old_connections
 from django.utils import timezone
-
 from .models import AnalysisJob
 
 

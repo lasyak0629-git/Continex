@@ -1,10 +1,9 @@
 # OWNER: Dev A
 import json
-from datetime import date
 
+from datetime import date
 from django.core.exceptions import PermissionDenied
 from django.test import TestCase
-
 from apps.accounts.models import User
 from apps.accounts.permissions import can_view
 from apps.extraction.models import ExtractedItem

@@ -1,7 +1,6 @@
 # OWNER Dev A
 from django.test import TestCase
 from django.urls import reverse
-
 from apps.accounts.models import User
 from apps.accounts.verification import make_token, read_token
 from apps.projects.models import Invitation, Membership, Project

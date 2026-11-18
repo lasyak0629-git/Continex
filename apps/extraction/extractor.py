@@ -1,5 +1,4 @@
 # OWNER: Dev B
-# OWNER: Dev B
 from .prompts import SYSTEM_PROMPT, build_user_prompt
 from .injection_guard import parse_llm_output, flag_injection
 from .quote_verifier import verify_items

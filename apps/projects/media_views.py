@@ -1,9 +1,8 @@
+# OWNER Dev A
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
-
 from apps.accounts.decorators import project_role_required
 from apps.audit.logger import log
-
 from .media import start_transcription
 from .models import Source
 

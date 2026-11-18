@@ -1,3 +1,4 @@
+# OWNER Dev A
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -5,10 +6,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.http import require_POST
-
 from apps.accounts.decorators import project_role_required
 from apps.audit.logger import log
-
 from .models import GapQuestion, Project
 
 

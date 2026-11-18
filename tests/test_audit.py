@@ -1,6 +1,5 @@
 # OWNER: Dev A
 from django.test import TestCase
-
 from apps.accounts.models import User
 from apps.audit.models import AuditEvent
 from apps.extraction.models import ExtractedItem

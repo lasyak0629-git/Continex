@@ -1,5 +1,4 @@
 # OWNER: Dev B
-# OWNER: Dev B
 import re
 
 

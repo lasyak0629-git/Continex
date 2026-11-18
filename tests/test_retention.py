@@ -1,14 +1,12 @@
 # OWNER Dev: A
 import tempfile
 from datetime import timedelta
-
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
-
 from apps.accounts.models import User
 from apps.audit.logger import log
 from apps.audit.models import AuditEvent

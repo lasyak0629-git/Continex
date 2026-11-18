@@ -1,4 +1,4 @@
-# Dev A created this file on 2024-06-15
+# OWNER Dev A
 from django.contrib import admin
 from .models import ExtractedItem
 

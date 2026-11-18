@@ -1,6 +1,6 @@
+# OWNER: Dev A
 import threading
 from pathlib import Path
-
 from django.db import close_old_connections
 
 IMAGE = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp"}

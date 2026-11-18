@@ -1,12 +1,10 @@
 # OWNER: Dev A
 from types import SimpleNamespace
-
 from apps.audit.logger import log
 from apps.extraction.models import ExtractedItem
 from apps.rehearsal.rules.base import owned_by_leaver
 from apps.review.services import can_finalize, latest_run
 from datetime import timedelta
-
 from django.conf import settings
 from django.utils import timezone
 from .models import Handover

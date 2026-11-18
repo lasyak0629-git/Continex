@@ -1,6 +1,5 @@
 # OWNER: Dev A
 from functools import wraps
-
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404

@@ -3,7 +3,6 @@ import tempfile
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
-
 from apps.accounts.models import User
 from apps.projects.models import Membership, Project, Source
 from apps.projects.services import prepare_texts

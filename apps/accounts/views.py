@@ -1,5 +1,4 @@
 # OWNER Dev A
-
 import time
 
 from django.contrib import messages
@@ -8,9 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
-
 from apps.audit.logger import log
-
 from .forms import SignupForm
 from .verification import read_token, send_verification
 

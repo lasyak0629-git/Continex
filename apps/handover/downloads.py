@@ -1,9 +1,8 @@
+# OWNER Dev A
 from django.http import Http404, HttpResponse
 from django.utils.text import slugify
-
 from apps.accounts.decorators import project_role_required
 from apps.audit.logger import log
-
 from .document import build_document, render_docx, render_pdf
 
 TYPES = {

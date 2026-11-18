@@ -1,9 +1,7 @@
 # OWNER Dev A  
 import json
 from datetime import date
-
 from django.test import TestCase
-
 from apps.accounts.models import User
 from apps.extraction.models import ExtractedItem
 from apps.handover.builder import build_handover

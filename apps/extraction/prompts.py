@@ -1,5 +1,4 @@
 # OWNER: Dev B
-# OWNER: Dev B
 SYSTEM_PROMPT = """You extract facts from project records for a handover tool.
 
 RULES
